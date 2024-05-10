@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "target": "es2022",
+        "verbatimModuleSyntax": false,
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "moduleDetection": "force",
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
+        "outDir": "dist",
+        "sourceMap": true,
+
+        "lib": ["es2022"],
+        "types": ["vite"],
+
+        "declaration": true
+    },
+    "include": ["./src/"]
+}
