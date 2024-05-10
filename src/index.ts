@@ -126,6 +126,10 @@ export function typo3Composer(
             // Disable public dir since TYPO3 already has plenty of options to serve static files
             config.publicDir ??= false;
 
+            // Enable source maps for CSS files in dev environment
+            config.css ??= {};
+            config.css.devSourcemap ??= true;
+
             // Setup build destination folder
             config.build ??= {};
             config.build.manifest ??= true;
