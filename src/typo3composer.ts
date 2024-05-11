@@ -7,7 +7,7 @@ import type {
     FinalVitePluginTypo3Config,
     Typo3ExtensionInfo,
 } from "./types.js";
-import { initializePluginConfig, readJsonFile } from "./utils.js"
+import { initializePluginConfig, readJsonFile } from "./utils.js";
 
 function determineRelevantTypo3Extensions(
     composerRoot: string,
@@ -71,7 +71,7 @@ function findEntrypoints(
     return entrypoints;
 }
 
-export default function typo3composer (
+export default function typo3composer(
     userConfig: VitePluginTypo3Config = {},
 ): PluginOption {
     let pluginConfig: FinalVitePluginTypo3Config;

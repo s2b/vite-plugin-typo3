@@ -9,17 +9,17 @@
   ],
   "homepage": "https://github.com/s2b/vite-plugin-typo3",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.cts",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
       }
     }
   },
@@ -28,10 +28,7 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && npm run build:types && npm run build:cjs && npm run build:esm",
-    "build:types": "tsc --emitDeclarationOnly && mv dist/index.d.ts dist/index.d.mts && cp dist/index.d.mts dist/index.d.cts",
-    "build:cjs": "esbuild src/*.ts --platform=node --format=cjs --out-extension:.js=.cjs --outdir=dist",
-    "build:esm": "esbuild src/*.ts --platform=node --format=esm --out-extension:.js=.mjs --outdir=dist",
+    "build": "npm run clean && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json",
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write ."
@@ -45,7 +42,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.2",
-    "esbuild": "^0.19.4",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"

@@ -1,6 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { FinalVitePluginTypo3Config, VitePluginTypo3Config } from "./types.js";
+import type {
+    FinalVitePluginTypo3Config,
+    VitePluginTypo3Config,
+} from "./types.js";
 
 export function initializePluginConfig(
     userConfig: VitePluginTypo3Config,
