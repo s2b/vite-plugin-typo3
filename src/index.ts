@@ -9,9 +9,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import autoOrigin from "vite-plugin-auto-origin";
 
-function hasFile(root: string, file: string): boolean {
-    const path = join(root, file);
-    return existsSync(path);
+function readJsonFile(file: string): any {
+    return JSON.parse(readFileSync(file, "utf-8")) || {};
 }
 
 function isComposerRoot(file: string): boolean {
@@ -20,10 +19,8 @@ function isComposerRoot(file: string): boolean {
 }
 
 function determineComposerRoot(current: string, root = current): string {
-    if (
-        hasFile(current, "composer.json") &&
-        isComposerRoot(join(current, "composer.json"))
-    ) {
+    const composerJson = join(current, "composer.json");
+    if (existsSync(composerJson) && isComposerRoot(composerJson)) {
         return current;
     }
     const dir = dirname(current);
@@ -34,27 +31,21 @@ function determineComposerRoot(current: string, root = current): string {
     return determineComposerRoot(dir, root);
 }
 
-function readJsonFile(file: string): any {
-    return JSON.parse(readFileSync(file, "utf-8")) || {};
-}
-
 function determineRelevantTypo3Extensions(
     composerRoot: string,
     pluginConfig: FinalVitePluginTypo3Config,
 ): Typo3ExtensionInfo[] {
-    const composerPackagePath = join(composerRoot, "vendor/composer");
-    if (!hasFile(composerPackagePath, "installed.json")) {
+    const composerInstalled = join(composerRoot, "vendor/composer/installed.json");
+    if (!existsSync(composerInstalled)) {
         throw new Error(
-            `Unable to read composer package information from "${composerPackagePath}". Try executing "composer install".`,
+            `Unable to read composer package information from "${composerInstalled}". Try executing "composer install".`,
         );
     }
 
-    const installedPackages = readJsonFile(
-        join(composerPackagePath, "installed.json"),
-    );
+    const installedPackages = readJsonFile(composerInstalled);
     if (!installedPackages.packages) {
         throw new Error(
-            `Invalid composer state in  "${composerPackagePath}/installed.json". Try executing "composer install".`,
+            `Invalid composer state in  "${composerInstalled}". Try executing "composer install".`,
         );
     }
 
@@ -63,12 +54,12 @@ function determineRelevantTypo3Extensions(
         .map(
             (extension: any): Typo3ExtensionInfo => ({
                 key: extension["extra"]["typo3/cms"]["extension-key"],
-                path: resolve(composerPackagePath, extension["install-path"]),
+                path: resolve(dirname(composerInstalled), extension["install-path"]),
             }),
         );
 
     return installedExtensions.filter((extension) =>
-        hasFile(extension.path, pluginConfig.entrypointFile),
+        existsSync(join(extension.path, pluginConfig.entrypointFile)),
     );
 }
 
