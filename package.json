@@ -31,7 +31,8 @@
     "build": "npm run clean && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json",
     "prepack": "npm run build",
     "lint": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "jest"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",
@@ -41,8 +42,11 @@
     "vite": "^5.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/node": "^20.8.2",
+    "jest": "^29.7.0",
     "prettier": "^3.0.3",
+    "ts-jest": "^29.1.2",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
   }
