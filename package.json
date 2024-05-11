@@ -30,8 +30,8 @@
     "clean": "rm -rf ./dist",
     "build": "npm run clean && npm run build:types && npm run build:cjs && npm run build:esm",
     "build:types": "tsc --emitDeclarationOnly && mv dist/index.d.ts dist/index.d.mts && cp dist/index.d.mts dist/index.d.cts",
-    "build:cjs": "esbuild src/index.ts --platform=node --format=cjs --outfile=dist/index.cjs",
-    "build:esm": "esbuild src/index.ts --platform=node --format=esm --outfile=dist/index.mjs",
+    "build:cjs": "esbuild src/*.ts --platform=node --format=cjs --out-extension:.js=.cjs --outdir=dist",
+    "build:esm": "esbuild src/*.ts --platform=node --format=esm --out-extension:.js=.mjs --outdir=dist",
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write ."
