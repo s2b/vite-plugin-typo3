@@ -18,7 +18,7 @@ export function initializePluginConfig(
 }
 
 export function readJsonFile(file: string): any {
-    return JSON.parse(readFileSync(file, "utf-8")) || {};
+    return JSON.parse(readFileSync(file, "utf-8"));
 }
 
 export function isComposerRoot(file: string): boolean {
