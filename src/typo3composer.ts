@@ -1,13 +1,15 @@
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import type { PluginOption } from "vite";
+import type { Alias, Logger, PluginOption } from "vite";
 import fg from "fast-glob";
+import colors from "picocolors";
 import type {
     VitePluginTypo3Config,
     FinalVitePluginTypo3Config,
     Typo3ExtensionInfo,
 } from "./types.js";
 import { initializePluginConfig, readJsonFile } from "./utils.js";
+import { createLogger } from "vite";
 
 function determineRelevantTypo3Extensions(
     composerRoot: string,
@@ -71,21 +73,61 @@ function findEntrypoints(
     return entrypoints;
 }
 
+function outputDebugInformation(
+    relevantExtensions: Typo3ExtensionInfo[],
+    entrypoints: string[],
+    pluginConfig: VitePluginTypo3Config,
+    logger: Logger,
+): void {
+    if (relevantExtensions.length) {
+        const extensionList = relevantExtensions.map(
+            (extension) => extension.key,
+        );
+        const aliasList = extensionList.map(
+            (extensionKey) => "@" + extensionKey,
+        );
+        logger.info(
+            `The following extensions with vite entrypoints have been recognized: ${colors.green(extensionList.join(", "))}`,
+            { timestamp: true },
+        );
+        logger.info(
+            `The following aliases have been defined: ${colors.green(aliasList.join(", "))}`,
+            { timestamp: true },
+        );
+    }
+
+    if (entrypoints.length) {
+        const entrypointList = entrypoints.map((path) =>
+            path.replace(pluginConfig.composerRoot + "/", ""),
+        );
+        logger.info(
+            `The following entrypoints will be served:\n` +
+                colors.green("➜ " + entrypointList.join("\n➜ ")),
+            { timestamp: true },
+        );
+    }
+}
+
 export default function typo3composer(
     userConfig: VitePluginTypo3Config = {},
 ): PluginOption {
+    const logger = createLogger("info", { prefix: "[plugin-typo3]" });
+
     let pluginConfig: FinalVitePluginTypo3Config;
+    let relevantExtensions: Typo3ExtensionInfo[];
+    let entrypoints: string[];
 
     // TODO react to changes in ViteEntrypoints.json files
-    // TODO validate configuration and show notices/warnings (e. g. if manifest is disabled)
     // TODO cover more edge cases with proper error messages to simplify debugging
     // TODO add variant for libraries/extensions
-    // TODO show "start message" with extensions, aliases and discovered endpoints
+    // TODO allow different vendor dir (config.vendor-dir)
 
     return {
         name: "vite-plugin-typo3",
         config(config) {
             pluginConfig = initializePluginConfig(userConfig, config.root);
+
+            // TODO differentiate composer setups, show warning if invalid
 
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
@@ -106,7 +148,7 @@ export default function typo3composer(
             );
 
             // Extract relevant TYPO3 extensions from composer metadata
-            const relevantExtensions = determineRelevantTypo3Extensions(
+            relevantExtensions = determineRelevantTypo3Extensions(
                 pluginConfig.composerRoot,
                 pluginConfig,
             );
@@ -121,10 +163,16 @@ export default function typo3composer(
             config.resolve.alias = { ...config.resolve.alias, ...aliases };
 
             // Find all vite entrypoints in relevant TYPO3 extensions
-            const entrypoints = findEntrypoints(
-                relevantExtensions,
-                pluginConfig,
-            );
+            entrypoints = findEntrypoints(relevantExtensions, pluginConfig);
+
+            if (!entrypoints.length) {
+                logger.warn(
+                    colors.red(
+                        "No entrypoints from TYPO3 extensions have been picked up. Make sure that you create at least one 'Configuration/ViteEntrypoints.json' file.",
+                    ),
+                    { timestamp: true },
+                );
+            }
 
             // Add entrypoints to rollup config while preserving entrypoints that were added manually
             config.build.rollupOptions ??= {};
@@ -137,10 +185,25 @@ export default function typo3composer(
             config.build.rollupOptions.input = Object.values(
                 config.build.rollupOptions.input,
             ).concat(entrypoints);
+        },
+        configResolved(config) {
+            if (config.build.manifest === false) {
+                logger.warn(
+                    colors.red(
+                        "'config.build.manifest' is set to 'false', which might lead to problems with TYPO3.",
+                    ),
+                    { timestamp: true },
+                );
+            }
 
-            console.log("viteConfig", config);
-
-            console.log(this);
+            if (pluginConfig.debug) {
+                outputDebugInformation(
+                    relevantExtensions,
+                    entrypoints,
+                    pluginConfig,
+                    logger,
+                );
+            }
         },
     };
 }

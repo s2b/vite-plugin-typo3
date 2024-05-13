@@ -13,6 +13,7 @@ export function initializePluginConfig(
         entrypointFile: "Configuration/ViteEntrypoints.json",
         entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
         composerRoot: determineComposerRoot(root ?? process.cwd()),
+        debug: false,
         ...userConfig,
     };
 }
