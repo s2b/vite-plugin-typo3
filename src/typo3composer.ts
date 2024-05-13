@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type { Alias, Logger, PluginOption } from "vite";
+import type { InputOptions } from "rollup";
 import fg from "fast-glob";
 import colors from "picocolors";
 import type {
@@ -108,6 +109,20 @@ function outputDebugInformation(
     }
 }
 
+function addRollupInputs(options: InputOptions, inputs: string[]): InputOptions
+{
+    // Prevent empty input, which would trigger index.html fallback by vite
+    options.input ??= [];
+    if (typeof options.input === "string") {
+        options.input = [options.input].concat(inputs);
+    } else if (Array.isArray(options.input)) {
+        options.input = options.input.concat(inputs);
+    } else {
+        options.input = { ...options.input, ...inputs }
+    }
+    return options;
+}
+
 export default function typo3composer(
     userConfig: VitePluginTypo3Config = {},
 ): PluginOption {
@@ -175,16 +190,7 @@ export default function typo3composer(
             }
 
             // Add entrypoints to rollup config while preserving entrypoints that were added manually
-            config.build.rollupOptions ??= {};
-            config.build.rollupOptions.input ??= [];
-            if (typeof config.build.rollupOptions.input === "string") {
-                config.build.rollupOptions.input = [
-                    config.build.rollupOptions.input,
-                ];
-            }
-            config.build.rollupOptions.input = Object.values(
-                config.build.rollupOptions.input,
-            ).concat(entrypoints);
+            config.build.rollupOptions = addRollupInputs(config.build.rollupOptions ?? {}, entrypoints);
         },
         configResolved(config) {
             if (config.build.manifest === false) {
