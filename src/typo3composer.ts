@@ -132,7 +132,6 @@ export default function typo3composer(
     let relevantExtensions: Typo3ExtensionInfo[];
     let entrypoints: string[];
 
-    // TODO react to changes in ViteEntrypoints.json files
     // TODO cover more edge cases with proper error messages to simplify debugging
     // TODO add variant for libraries/extensions
     // TODO allow different vendor dir (config.vendor-dir)
