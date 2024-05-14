@@ -1,0 +1,13 @@
+{
+  "name": "typo3-plugin-typescript-test",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-typo3": "file:../../../"
+  },
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -32,7 +32,11 @@
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "test:distribution": "npm run test:distribution:cjs && npm run test:distribution:esm && npm run test:distribution:ts",
+    "test:distribution:cjs": "cd tests/distribution/javascript-cjs/ && npm install && npm run build",
+    "test:distribution:esm": "cd tests/distribution/javascript-esm/ && npm install && npm run build",
+    "test:distribution:ts": "cd tests/distribution/typescript/ && npm install && npm run build && npm run typecheck"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",

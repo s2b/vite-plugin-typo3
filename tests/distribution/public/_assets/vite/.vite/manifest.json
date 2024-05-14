@@ -1,0 +1,8 @@
+{
+  "../vendor/praetorius/test/Resources/Private/Main.entry.js": {
+    "file": "assets/Main.entry-l0sNRNKZ.js",
+    "name": "Main.entry",
+    "src": "../vendor/praetorius/test/Resources/Private/Main.entry.js",
+    "isEntry": true
+  }
+}

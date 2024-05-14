@@ -1,0 +1,14 @@
+{
+    "packages": [
+        {
+            "name": "praetorius/vite-plugin-distribution-test-extension",
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "test_extension"
+                }
+            },
+            "install-path": "../praetorius/test"
+        }
+    ]
+}
