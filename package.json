@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json",
+    "build": "npm run clean && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write .",
