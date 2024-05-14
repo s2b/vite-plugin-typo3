@@ -109,8 +109,10 @@ function outputDebugInformation(
     }
 }
 
-function addRollupInputs(options: InputOptions, inputs: string[]): InputOptions
-{
+function addRollupInputs(
+    options: InputOptions,
+    inputs: string[],
+): InputOptions {
     // Prevent empty input, which would trigger index.html fallback by vite
     options.input ??= [];
     if (typeof options.input === "string") {
@@ -118,7 +120,7 @@ function addRollupInputs(options: InputOptions, inputs: string[]): InputOptions
     } else if (Array.isArray(options.input)) {
         options.input = options.input.concat(inputs);
     } else {
-        options.input = { ...options.input, ...inputs }
+        options.input = { ...options.input, ...inputs };
     }
     return options;
 }
@@ -189,7 +191,10 @@ export default function typo3composer(
             }
 
             // Add entrypoints to rollup config while preserving entrypoints that were added manually
-            config.build.rollupOptions = addRollupInputs(config.build.rollupOptions ?? {}, entrypoints);
+            config.build.rollupOptions = addRollupInputs(
+                config.build.rollupOptions ?? {},
+                entrypoints,
+            );
         },
         configResolved(config) {
             if (config.build.manifest === false) {
