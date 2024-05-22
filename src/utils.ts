@@ -17,7 +17,10 @@ export function initializePluginConfig(
     root?: string,
 ): PluginConfig {
     const composerChain = collectComposerChain(root ?? process.cwd());
-    const composerContext = determineComposerContext(composerChain, userConfig.target);
+    const composerContext = determineComposerContext(
+        composerChain,
+        userConfig.target,
+    );
     if (!composerContext) {
         throw new Error(
             `No composer.json file could be found in parent directories.`,
@@ -34,10 +37,7 @@ export function initializePluginConfig(
     };
 }
 
-export function collectComposerChain(
-    path: string,
-    root = path,
-): ComposerContext[] {
+export function collectComposerChain(path: string): ComposerContext[] {
     let contexts: ComposerContext[] = [];
 
     // Check if composer file exists in current dir
@@ -59,22 +59,22 @@ export function collectComposerChain(
     // Check parent dirs recursively
     const parent = dirname(path);
     if (parent && parent !== path) {
-        contexts = contexts.concat(collectComposerChain(parent, root));
+        contexts = contexts.concat(collectComposerChain(parent));
     }
 
     return contexts;
 }
 
-export function determineComposerContext(chain: ComposerContext[], type?: string): ComposerContext | undefined {
+export function determineComposerContext(
+    chain: ComposerContext[],
+    type?: string,
+): ComposerContext | undefined {
     if (type) {
-        return chain.find(
-            (context) => context.type === type,
-        );
+        return chain.find((context) => context.type === type);
     } else {
-        return chain.find(
-            (context) => context.type === "project",
-        ) ?? chain.find(
-            (context) => context.type === "typo3-cms-extension",
+        return (
+            chain.find((context) => context.type === "project") ??
+            chain.find((context) => context.type === "typo3-cms-extension")
         );
     }
 }
