@@ -1,13 +1,14 @@
 import { describe, expect, test, beforeAll, afterAll } from "@jest/globals";
 import {
-    determineComposerRoot,
-    isComposerRoot,
+    collectComposerChain,
+    determineComposerContext,
     readJsonFile,
 } from "../src/utils";
 import { resolve } from "node:path";
 import mockFs from "mock-fs";
 
 beforeAll(() => {
+    // TODO switch to memfs to be compatible with node >= 20
     mockFs({
         "/path/to/fixtures": mockFs.load(resolve(__dirname, "fixtures")),
     });
@@ -16,25 +17,208 @@ afterAll(() => {
     mockFs.restore();
 });
 
-describe("isComposerRoot", () => {
-    test("checks project composer.json to be valid root composer file", () => {
+describe("determineComposerContext", () => {
+    test("user-defined target with existing composer.json", () => {
         expect(
-            isComposerRoot("/path/to/fixtures/composerProject/composer.json"),
-        ).toBe(true);
-    });
-    test("checks extension composer.json to be invalid root composer file", () => {
-        expect(
-            isComposerRoot(
-                "/path/to/fixtures/composerProject/packages/composerExtension/composer.json",
+            determineComposerContext(
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension1",
+                        content: {},
+                    },
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension2",
+                        content: {},
+                    },
+                    {
+                        type: "project",
+                        path: "/path/to/dummy/project",
+                        content: {},
+                    },
+                ],
+                "project",
             ),
-        ).toBe(false);
-    });
-    test("checks library composer.json to be invalid root composer file", () => {
+        ).toEqual({
+            type: "project",
+            path: "/path/to/dummy/project",
+            content: {},
+        });
         expect(
-            isComposerRoot(
-                "/path/to/fixtures/composerProject/vendor/namespace/library/composer.json",
+            determineComposerContext(
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension1",
+                        content: {},
+                    },
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension2",
+                        content: {},
+                    },
+                    {
+                        type: "project",
+                        path: "/path/to/dummy/project",
+                        content: {},
+                    },
+                ],
+                "typo3-cms-extension",
             ),
-        ).toBe(false);
+        ).toEqual({
+            type: "typo3-cms-extension",
+            path: "/path/to/dummy/extension1",
+            content: {},
+        });
+    });
+    test("user-defined target with non-existing composer.json", () => {
+        expect(
+            determineComposerContext(
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension1",
+                        content: {},
+                    },
+                    {
+                        type: "typo3-cms-extension",
+                        path: "/path/to/dummy/extension2",
+                        content: {},
+                    },
+                ],
+                "project",
+            ),
+        ).toBeUndefined();
+        expect(
+            determineComposerContext(
+                [
+                    {
+                        type: "project",
+                        path: "/path/to/dummy/project",
+                        content: {},
+                    },
+                ],
+                "typo3-cms-extension",
+            ),
+        ).toBeUndefined();
+    });
+    test("auto detection without composer project", () => {
+        expect(
+            determineComposerContext([
+                {
+                    type: "typo3-cms-extension",
+                    path: "/path/to/dummy/extension1",
+                    content: {},
+                },
+                {
+                    type: "typo3-cms-extension",
+                    path: "/path/to/dummy/extension2",
+                    content: {},
+                },
+            ]),
+        ).toEqual({
+            type: "typo3-cms-extension",
+            path: "/path/to/dummy/extension1",
+            content: {},
+        });
+    });
+    test("auto detection with composer project", () => {
+        expect(
+            determineComposerContext([
+                {
+                    type: "typo3-cms-extension",
+                    path: "/path/to/dummy/extension1",
+                    content: {},
+                },
+                {
+                    type: "typo3-cms-extension",
+                    path: "/path/to/dummy/extension2",
+                    content: {},
+                },
+                {
+                    type: "project",
+                    path: "/path/to/dummy/project",
+                    content: {},
+                },
+            ]),
+        ).toEqual({
+            type: "project",
+            path: "/path/to/dummy/project",
+            content: {},
+        });
+    });
+    test("auto detection without composer.json files", () => {
+        expect(determineComposerContext([])).toBeUndefined();
+    });
+});
+
+describe("collectComposerChain", () => {
+    test("determines composer chain from extension path", () => {
+        expect(
+            collectComposerChain(
+                "/path/to/fixtures/composerProject/packages/composerExtension",
+            ),
+        ).toEqual([
+            {
+                type: "typo3-cms-extension",
+                path: "/path/to/fixtures/composerProject/packages/composerExtension",
+                content: { type: "typo3-cms-extension" },
+            },
+            {
+                type: "project",
+                path: "/path/to/fixtures/composerProject",
+                content: { type: "project" },
+            },
+        ]);
+    });
+    test("determines composer chain from library path", () => {
+        expect(
+            collectComposerChain(
+                "/path/to/fixtures/composerProject/vendor/namespace/library",
+            ),
+        ).toEqual([
+            {
+                type: "library",
+                path: "/path/to/fixtures/composerProject/vendor/namespace/library",
+                content: { type: "library" },
+            },
+            {
+                type: "project",
+                path: "/path/to/fixtures/composerProject",
+                content: { type: "project" },
+            },
+        ]);
+    });
+    test("determines composer chain from root path", () => {
+        expect(
+            collectComposerChain("/path/to/fixtures/composerProject"),
+        ).toEqual([
+            {
+                type: "project",
+                path: "/path/to/fixtures/composerProject",
+                content: { type: "project" },
+            },
+        ]);
+    });
+    test("determines composer chain from other path", () => {
+        expect(
+            collectComposerChain("/path/to/fixtures/composerProject/packages"),
+        ).toEqual([
+            {
+                type: "project",
+                path: "/path/to/fixtures/composerProject",
+                content: { type: "project" },
+            },
+        ]);
+    });
+
+    test("fail to determine composer chain from extension path", () => {
+        expect(
+            collectComposerChain(
+                "/path/to/fixtures/nonComposerProject/typo3conf/ext/non_composer_extension",
+            ),
+        ).toEqual([]);
     });
 });
 
@@ -45,50 +229,5 @@ describe("readJsonFile", () => {
                 "/path/to/fixtures/composerProject/vendor/namespace/library/composer.json",
             ),
         ).toEqual({ type: "library" });
-    });
-});
-
-describe("determineComposerRoot", () => {
-    test("determines composer root from extension path", () => {
-        expect(
-            determineComposerRoot(
-                "/path/to/fixtures/composerProject/packages/composerExtension",
-            ),
-        ).toBe("/path/to/fixtures/composerProject");
-    });
-    test("determines composer root from library path", () => {
-        expect(
-            determineComposerRoot(
-                "/path/to/fixtures/composerProject/vendor/namespace/library",
-            ),
-        ).toBe("/path/to/fixtures/composerProject");
-    });
-    test("determines composer root from root path", () => {
-        expect(determineComposerRoot("/path/to/fixtures/composerProject")).toBe(
-            "/path/to/fixtures/composerProject",
-        );
-    });
-    test("determines composer root from other path", () => {
-        expect(
-            determineComposerRoot("/path/to/fixtures/composerProject/packages"),
-        ).toBe("/path/to/fixtures/composerProject");
-    });
-
-    test("fail to determine composer root from extension path", () => {
-        expect(
-            determineComposerRoot(
-                "/path/to/fixtures/nonComposerProject/typo3conf/ext/non_composer_extension",
-            ),
-        ).toBe(
-            "/path/to/fixtures/nonComposerProject/typo3conf/ext/non_composer_extension",
-        );
-    });
-    test("fail to determine composer root from extension path with fallback root specified", () => {
-        expect(
-            determineComposerRoot(
-                "/path/to/fixtures/nonComposerProject/typo3conf/ext/non_composer_extension",
-                "/path/to/fixtures/nonComposerProject",
-            ),
-        ).toBe("/path/to/fixtures/nonComposerProject");
     });
 });
