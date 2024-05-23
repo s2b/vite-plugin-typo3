@@ -155,13 +155,20 @@ export function addAliases(
     alias: AliasOptions | undefined,
     extensions: Typo3ExtensionInfo[],
 ): AliasOptions {
-    return {
-        ...alias,
-        ...extensions.map((extension) => ({
-            find: "@" + extension.key,
-            replacement: extension.path,
-        })),
-    };
+    const additionalAliases = extensions.map((extension) => ({
+        find: "@" + extension.key,
+        replacement: extension.path + "/",
+    }));
+
+    alias ??= [];
+    if (!Array.isArray(alias)) {
+        alias = Object.entries(alias).map((entry) => ({
+            find: entry[0],
+            replacement: entry[1],
+        }));
+    }
+
+    return alias.concat(additionalAliases);
 }
 
 export function readJsonFile(file: string): any {
