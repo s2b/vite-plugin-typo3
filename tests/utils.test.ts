@@ -1,21 +1,11 @@
-import { describe, expect, test, beforeAll, afterAll } from "@jest/globals";
+import { describe, expect, test, jest } from "@jest/globals";
 import {
     collectComposerChain,
     determineComposerContext,
     readJsonFile,
 } from "../src/utils";
-import { resolve } from "node:path";
-import mockFs from "mock-fs";
 
-beforeAll(() => {
-    // TODO switch to memfs to be compatible with node >= 20
-    mockFs({
-        "/path/to/fixtures": mockFs.load(resolve(__dirname, "fixtures")),
-    });
-});
-afterAll(() => {
-    mockFs.restore();
-});
+jest.mock("node:fs");
 
 describe("determineComposerContext", () => {
     test("user-defined target with existing composer.json", () => {

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type {
     ComposerContext,
@@ -45,7 +45,7 @@ export function collectComposerChain(path: string): ComposerContext[] {
 
     // Check if composer file exists in current dir
     const composerFile = join(path, "composer.json");
-    if (existsSync(composerFile)) {
+    if (fs.existsSync(composerFile)) {
         const composerJson = readJsonFile(composerFile);
         contexts.push({
             type: composerJson.type ?? "library",
@@ -165,5 +165,5 @@ export function addAliases(
 }
 
 export function readJsonFile(file: string): any {
-    return JSON.parse(readFileSync(file, "utf-8"));
+    return JSON.parse(fs.readFileSync(file, "utf-8"));
 }
