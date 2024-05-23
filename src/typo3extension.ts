@@ -30,19 +30,15 @@ export default function typo3extension(
 
     return {
         name: "vite-plugin-typo3-extension",
-        apply(config, { command }) {
-            if (command !== "build") {
-                return false;
-            }
+        apply: "build",
+        config(config) {
             try {
                 pluginConfig = initializePluginConfig(userConfig, config.root);
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
-                return false;
+                return;
             }
-            return pluginConfig.target === "typo3-cms-extension";
-        },
-        config(config) {
+
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
 
@@ -92,7 +88,7 @@ export default function typo3extension(
                 entry: addRollupInputs(lib?.entry, entrypoints),
             };
         },
-        configResolved(config) {
+        configResolved() {
             if (pluginConfig.debug) {
                 outputDebugInformation(
                     [extension],

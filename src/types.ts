@@ -1,12 +1,12 @@
 export interface UserConfig {
-    target?: VitePluginTarget;
+    target?: PluginTarget;
     entrypointFile?: string;
     entrypointIgnorePatterns?: string[];
     debug?: boolean;
 }
 
 export interface PluginConfig extends UserConfig {
-    target: VitePluginTarget;
+    target: PluginTarget;
     entrypointFile: string;
     composerContext: ComposerContext;
     entrypointIgnorePatterns: string[];
@@ -24,4 +24,4 @@ export interface ComposerContext {
     content: any;
 }
 
-export type VitePluginTarget = "project" | "typo3-cms-extension";
+export type PluginTarget = "project" | "extension";

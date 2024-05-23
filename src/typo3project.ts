@@ -65,16 +65,14 @@ export default function typo3project(
 
     return {
         name: "vite-plugin-typo3-project",
-        apply(config) {
+        config(config) {
             try {
                 pluginConfig = initializePluginConfig(userConfig, config.root);
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
-                return false;
+                return;
             }
-            return pluginConfig.target === "project";
-        },
-        config(config) {
+
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
 

@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import type {
     ComposerContext,
     PluginConfig,
-    VitePluginTarget,
+    PluginTarget,
     UserConfig,
     Typo3ExtensionInfo,
 } from "./types.js";
@@ -16,24 +16,27 @@ export function initializePluginConfig(
     userConfig: UserConfig,
     root?: string,
 ): PluginConfig {
-    const composerChain = collectComposerChain(root ?? process.cwd());
+    const target = userConfig.target ?? "project";
+
     const composerContext = determineComposerContext(
-        composerChain,
-        userConfig.target,
+        target,
+        collectComposerChain(root ?? process.cwd()),
     );
     if (!composerContext) {
-        throw new Error(
-            `No composer.json file could be found in parent directories.`,
-        );
+        const message =
+            target === "project"
+                ? 'No composer project could be found in parent directories. If you only want to bundle assets of a single extension, make sure to set "target" to "extension".'
+                : "No extension composer file could be found in parent directories. Make sure that your extension has a valid composer file.";
+        throw new Error(message);
     }
 
     return {
+        target,
         entrypointFile: "Configuration/ViteEntrypoints.json",
         entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
         debug: false,
-        ...userConfig,
-        target: composerContext.type as VitePluginTarget,
         composerContext: composerContext,
+        ...userConfig,
     };
 }
 
@@ -66,17 +69,11 @@ export function collectComposerChain(path: string): ComposerContext[] {
 }
 
 export function determineComposerContext(
+    target: PluginTarget,
     chain: ComposerContext[],
-    type?: string,
 ): ComposerContext | undefined {
-    if (type) {
-        return chain.find((context) => context.type === type);
-    } else {
-        return (
-            chain.find((context) => context.type === "project") ??
-            chain.find((context) => context.type === "typo3-cms-extension")
-        );
-    }
+    const type = target === "extension" ? "typo3-cms-extension" : target;
+    return chain.find((context) => context.type === type);
 }
 
 export function findEntrypointsInExtensions(
