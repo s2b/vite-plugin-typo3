@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import type { InputOption } from "rollup";
+import type { AliasOptions, Logger } from "vite";
+import fg from "fast-glob";
+import colors from "picocolors";
 import type {
     ComposerContext,
     PluginConfig,
@@ -7,10 +11,6 @@ import type {
     UserConfig,
     Typo3ExtensionInfo,
 } from "./types.js";
-import type { InputOption } from "rollup";
-import { AliasOptions, Logger } from "vite";
-import fg from "fast-glob";
-import colors from "picocolors";
 
 export function initializePluginConfig(
     userConfig: UserConfig,

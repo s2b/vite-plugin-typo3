@@ -1,6 +1,6 @@
-import { existsSync } from "node:fs";
+import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import type { PluginOption } from "vite";
+import { type PluginOption, createLogger } from "vite";
 import colors from "picocolors";
 import type { UserConfig, PluginConfig, Typo3ExtensionInfo } from "./types.js";
 import {
@@ -11,7 +11,6 @@ import {
     outputDebugInformation,
     readJsonFile,
 } from "./utils.js";
-import { createLogger } from "vite";
 
 function determineRelevantTypo3Extensions(
     pluginConfig: PluginConfig,
@@ -24,7 +23,7 @@ function determineRelevantTypo3Extensions(
         vendorDir,
         "composer/installed.json",
     );
-    if (!existsSync(composerInstalled)) {
+    if (!fs.existsSync(composerInstalled)) {
         throw new Error(
             `Unable to read composer package information from "${composerInstalled}". Try executing "composer install".`,
         );
@@ -50,7 +49,7 @@ function determineRelevantTypo3Extensions(
         );
 
     return installedExtensions.filter((extension) =>
-        existsSync(join(extension.path, pluginConfig.entrypointFile)),
+        fs.existsSync(join(extension.path, pluginConfig.entrypointFile)),
     );
 }
 

@@ -1,5 +1,7 @@
-import { LibraryOptions, PluginOption, createLogger } from "vite";
-import {
+import { resolve } from "node:path";
+import { type LibraryOptions, type PluginOption, createLogger } from "vite";
+import colors from "picocolors";
+import type {
     ComposerContext,
     PluginConfig,
     Typo3ExtensionInfo,
@@ -12,8 +14,6 @@ import {
     initializePluginConfig,
     outputDebugInformation,
 } from "./utils.js";
-import { resolve } from "node:path";
-import colors from "picocolors";
 
 function determineExtensionKey(composerContext: ComposerContext): string {
     return composerContext.content["extra"]["typo3/cms"]["extension-key"] ?? "";
