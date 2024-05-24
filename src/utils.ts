@@ -35,7 +35,7 @@ export function initializePluginConfig(
         entrypointFile: "Configuration/ViteEntrypoints.json",
         entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
         debug: false,
-        composerContext: composerContext,
+        composerContext,
         ...userConfig,
     };
 }
@@ -157,7 +157,9 @@ export function addAliases(
 ): AliasOptions {
     const additionalAliases = extensions.map((extension) => ({
         find: "@" + extension.key,
-        replacement: extension.path + "/",
+        replacement: extension.path.endsWith("/")
+            ? extension.path
+            : extension.path + "/",
     }));
 
     alias ??= [];
