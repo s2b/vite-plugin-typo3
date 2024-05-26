@@ -2,7 +2,7 @@
     "type": "typo3-cms-extension",
     "extra": {
         "typo3/cms": {
-            "extension-key": "composer_extension"
+            "extension-key": "namespace_extension"
         }
     }
 }

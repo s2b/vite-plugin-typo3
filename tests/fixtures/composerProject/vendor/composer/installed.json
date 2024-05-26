@@ -1,3 +1,26 @@
 {
-    "packages": []
+    "packages": [
+        {
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "composer_extension"
+                }
+            },
+            "install-path": "../../packages/composerExtension"
+        },
+        {
+            "type": "library",
+            "install-path": "../namespace/library"
+        },
+        {
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "namespace_extension"
+                }
+            },
+            "install-path": "../namespace/extension"
+        }
+    ]
 }

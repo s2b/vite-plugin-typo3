@@ -1,57 +1,15 @@
-import fs from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { resolve } from "node:path";
 import { type PluginOption, createLogger } from "vite";
 import colors from "picocolors";
 import type { UserConfig, PluginConfig, Typo3ExtensionInfo } from "./types.js";
 import {
     addAliases,
     addRollupInputs,
+    determineRelevantTypo3Extensions,
     findEntrypointsInExtensions,
     initializePluginConfig,
     outputDebugInformation,
-    readJsonFile,
 } from "./utils.js";
-
-function determineRelevantTypo3Extensions(
-    pluginConfig: PluginConfig,
-): Typo3ExtensionInfo[] {
-    const vendorDir =
-        pluginConfig.composerContext.content?.config?.["vendor-dir"] ??
-        "vendor";
-    const composerInstalled = join(
-        pluginConfig.composerContext.path,
-        vendorDir,
-        "composer/installed.json",
-    );
-    if (!fs.existsSync(composerInstalled)) {
-        throw new Error(
-            `Unable to read composer package information from "${composerInstalled}". Try executing "composer install".`,
-        );
-    }
-
-    const installedPackages = readJsonFile(composerInstalled);
-    if (!installedPackages.packages) {
-        throw new Error(
-            `Invalid composer state in  "${composerInstalled}". Try executing "composer install".`,
-        );
-    }
-
-    const installedExtensions: Typo3ExtensionInfo[] = installedPackages.packages
-        .filter((extension: any) => extension?.type === "typo3-cms-extension")
-        .map(
-            (extension: any): Typo3ExtensionInfo => ({
-                key: extension["extra"]["typo3/cms"]["extension-key"],
-                path: resolve(
-                    dirname(composerInstalled),
-                    extension["install-path"],
-                ),
-            }),
-        );
-
-    return installedExtensions.filter((extension) =>
-        fs.existsSync(join(extension.path, pluginConfig.entrypointFile)),
-    );
-}
 
 export default function typo3project(
     userConfig: UserConfig = {},
@@ -91,7 +49,10 @@ export default function typo3project(
             );
 
             // Extract relevant TYPO3 extensions from composer metadata
-            relevantExtensions = determineRelevantTypo3Extensions(pluginConfig);
+            relevantExtensions = determineRelevantTypo3Extensions(
+                pluginConfig.composerContext,
+                pluginConfig.entrypointFile,
+            );
 
             // Add path alias for each extension
             config.resolve ??= {};
@@ -103,7 +64,8 @@ export default function typo3project(
             // Find all vite entrypoints in relevant TYPO3 extensions
             entrypoints = findEntrypointsInExtensions(
                 relevantExtensions,
-                pluginConfig,
+                pluginConfig.entrypointFile,
+                pluginConfig.entrypointIgnorePatterns,
             );
 
             if (!entrypoints.length) {
@@ -136,7 +98,7 @@ export default function typo3project(
                 outputDebugInformation(
                     relevantExtensions,
                     entrypoints,
-                    pluginConfig,
+                    pluginConfig.composerContext,
                     logger,
                 );
             }

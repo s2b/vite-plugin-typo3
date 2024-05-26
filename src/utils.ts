@@ -78,32 +78,83 @@ export function determineComposerContext(
 
 export function findEntrypointsInExtensions(
     extensions: Typo3ExtensionInfo[],
-    pluginConfig: PluginConfig,
+    entrypointFile: string,
+    entrypointIgnorePatterns: string[],
 ): string[] {
     let entrypoints: string[] = [];
     extensions.forEach((extension) => {
-        const entrypointFile = join(
-            extension.path,
-            pluginConfig.entrypointFile,
-        );
-        const patterns = readJsonFile(entrypointFile).map((pattern: string) =>
-            resolve(dirname(entrypointFile), pattern),
+        const file = join(extension.path, entrypointFile);
+        if (!fs.existsSync(file)) {
+            return;
+        }
+        const patterns = readJsonFile(file).map((pattern: string) =>
+            resolve(dirname(file), pattern),
         );
         entrypoints = entrypoints.concat(
-            fg.sync(patterns, {
-                cwd: dirname(entrypointFile),
-                ignore: pluginConfig.entrypointIgnorePatterns,
+            fg.globSync(patterns, {
+                cwd: dirname(file),
+                ignore: entrypointIgnorePatterns,
                 absolute: true,
+                // This doesn't seem to work correctly, which is why tests
+                // use the actual file system for now
+                // fs,
             }),
         );
     });
     return entrypoints;
 }
 
+export function determineRelevantTypo3Extensions(
+    composerContext: ComposerContext,
+    entrypointFile: string,
+): Typo3ExtensionInfo[] {
+    if (composerContext.type !== "project") {
+        throw new Error(
+            "determineRelevantTypo3Extensions can only be used for composer projects",
+        );
+    }
+
+    const vendorDir =
+        composerContext.content?.config?.["vendor-dir"] ?? "vendor";
+    const composerInstalled = join(
+        composerContext.path,
+        vendorDir,
+        "composer/installed.json",
+    );
+    if (!fs.existsSync(composerInstalled)) {
+        throw new Error(
+            `Unable to read composer package information from "${composerInstalled}". Try executing "composer install".`,
+        );
+    }
+
+    const installedPackages = readJsonFile(composerInstalled);
+    if (!installedPackages.packages) {
+        throw new Error(
+            `Invalid composer state in  "${composerInstalled}". Try executing "composer install".`,
+        );
+    }
+
+    const installedExtensions: Typo3ExtensionInfo[] = installedPackages.packages
+        .filter((extension: any) => extension?.type === "typo3-cms-extension")
+        .map(
+            (extension: any): Typo3ExtensionInfo => ({
+                key: extension["extra"]["typo3/cms"]["extension-key"],
+                path: resolve(
+                    dirname(composerInstalled),
+                    extension["install-path"],
+                ),
+            }),
+        );
+
+    return installedExtensions.filter((extension) =>
+        fs.existsSync(join(extension.path, entrypointFile)),
+    );
+}
+
 export function outputDebugInformation(
     relevantExtensions: Typo3ExtensionInfo[],
     entrypoints: string[],
-    pluginConfig: PluginConfig,
+    composerContext: ComposerContext,
     logger: Logger,
 ): void {
     if (relevantExtensions.length) {
@@ -125,7 +176,7 @@ export function outputDebugInformation(
 
     if (entrypoints.length) {
         const entrypointList = entrypoints.map((path) =>
-            path.replace(pluginConfig.composerContext.path + "/", ""),
+            path.replace(composerContext.path + "/", ""),
         );
         logger.info(
             `The following entrypoints will be served:\n` +

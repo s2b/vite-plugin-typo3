@@ -70,7 +70,8 @@ export default function typo3extension(
             // Find all vite entrypoints in extension
             entrypoints = findEntrypointsInExtensions(
                 [extension],
-                pluginConfig,
+                pluginConfig.entrypointFile,
+                pluginConfig.entrypointIgnorePatterns,
             );
 
             if (!entrypoints.length) {
@@ -95,7 +96,7 @@ export default function typo3extension(
                 outputDebugInformation(
                     [extension],
                     entrypoints,
-                    pluginConfig,
+                    pluginConfig.composerContext,
                     logger,
                 );
             }
