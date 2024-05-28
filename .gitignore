@@ -2,3 +2,5 @@ node_modules
 dist
 coverage
 tests/distribution/**/public
+tests/integration/project/public
+tests/integration/project/packages/test_extension/Resources/Public

@@ -1,0 +1,26 @@
+{
+  "packages/test_extension/Resources/Private/Alt.entry.ts": {
+    "file": "assets/Alt.entry-D9NJkUbZ.js",
+    "name": "Alt.entry",
+    "src": "packages/test_extension/Resources/Private/Alt.entry.ts",
+    "isEntry": true
+  },
+  "packages/test_extension/Resources/Private/Main.entry.ts": {
+    "file": "assets/Main.entry-Cy860-05.js",
+    "name": "Main.entry",
+    "src": "packages/test_extension/Resources/Private/Main.entry.ts",
+    "isEntry": true,
+    "css": [
+      "assets/Main-CAg0JlTy.css"
+    ]
+  },
+  "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts": {
+    "file": "assets/Vendor.entry-CxSfYUEX.js",
+    "name": "Vendor.entry",
+    "src": "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts",
+    "isEntry": true,
+    "css": [
+      "assets/Vendor-CVaSH70M.css"
+    ]
+  }
+}

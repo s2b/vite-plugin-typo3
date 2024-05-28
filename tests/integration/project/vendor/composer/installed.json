@@ -1,0 +1,22 @@
+{
+    "packages": [
+        {
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "test_extension"
+                }
+            },
+            "install-path": "../../packages/test_extension"
+        },
+        {
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "vendor_extension"
+                }
+            },
+            "install-path": "../test-vendor/vendor-extension"
+        }
+    ]
+}
