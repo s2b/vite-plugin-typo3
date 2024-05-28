@@ -6,7 +6,11 @@ describe("addAliases", () => {
         expect(addAliases(undefined, [])).toEqual([]);
         expect(
             addAliases(undefined, [
-                { key: "test_extension", path: "/path/to/dummy/extension1" },
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension",
+                    path: "/path/to/dummy/extension1",
+                },
             ]),
         ).toEqual([
             {
@@ -23,7 +27,11 @@ describe("addAliases", () => {
         ]);
         expect(
             addAliases({ "@existing_find": "/path/to/replace/with/" }, [
-                { key: "test_extension", path: "/path/to/dummy/extension1" },
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension",
+                    path: "/path/to/dummy/extension1",
+                },
             ]),
         ).toEqual([
             { find: "@existing_find", replacement: "/path/to/replace/with/" },
@@ -58,7 +66,13 @@ describe("addAliases", () => {
                         replacement: "/path/to/replace/with/",
                     },
                 ],
-                [{ key: "test_extension", path: "/path/to/dummy/extension1" }],
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
+                        path: "/path/to/dummy/extension1",
+                    },
+                ],
             ),
         ).toEqual([
             { find: "@existing_find", replacement: "/path/to/replace/with/" },
@@ -71,7 +85,11 @@ describe("addAliases", () => {
     test("no double slashes in added alias paths", () => {
         expect(
             addAliases(undefined, [
-                { key: "test_extension", path: "/path/to/dummy/extension1/" },
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension",
+                    path: "/path/to/dummy/extension1/",
+                },
             ]),
         ).toEqual([
             {

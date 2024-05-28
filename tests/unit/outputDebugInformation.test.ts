@@ -20,14 +20,21 @@ describe("outputDebugInformation", () => {
         const logger = mockLogger();
         outputDebugInformation(
             [
-                { key: "test_extension1", path: "/path/to/dummy/extension1" },
-                { key: "test_extension2", path: "/path/to/dummy/extension2" },
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension1",
+                    path: "/path/to/dummy/extension1",
+                },
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension2",
+                    path: "/path/to/dummy/extension2",
+                },
             ],
             ["/path/to/dummy/entrypoint.js"],
             {
                 type: "project",
                 path: "/path/to/dummy",
-                content: {},
             },
             logger,
         );
@@ -56,12 +63,17 @@ describe("outputDebugInformation", () => {
     test("no entrypoint from one extensions", () => {
         const logger = mockLogger();
         outputDebugInformation(
-            [{ key: "test_extension1", path: "/path/to/dummy/extension1" }],
+            [
+                {
+                    type: "typo3-cms-extension",
+                    extensionKey: "test_extension1",
+                    path: "/path/to/dummy/extension1",
+                },
+            ],
             [],
             {
                 type: "project",
                 path: "/path/to/dummy",
-                content: {},
             },
             logger,
         );
@@ -77,7 +89,6 @@ describe("outputDebugInformation", () => {
             {
                 type: "project",
                 path: "/path/to/dummy",
-                content: {},
             },
             logger,
         );

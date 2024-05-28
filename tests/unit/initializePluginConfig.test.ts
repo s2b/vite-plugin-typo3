@@ -1,12 +1,16 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { initializePluginConfig } from "../../src/utils";
+import { Typo3ExtensionContext, Typo3ProjectContext } from "../../src/types";
 
 jest.mock("node:fs");
 
 describe("initializePluginConfig", () => {
     test("empty user settings", () => {
         expect(
-            initializePluginConfig({}, "/path/to/fixtures/composerProject"),
+            initializePluginConfig<Typo3ProjectContext>(
+                {},
+                "/path/to/fixtures/composerProject",
+            ),
         ).toEqual({
             target: "project",
             entrypointFile: "Configuration/ViteEntrypoints.json",
@@ -15,13 +19,14 @@ describe("initializePluginConfig", () => {
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         });
     });
     test("defined user settings", () => {
         expect(
-            initializePluginConfig(
+            initializePluginConfig<Typo3ProjectContext>(
                 { debug: true, entrypointFile: "viteEntrypoints.json" },
                 "/path/to/fixtures/composerProject",
             ),
@@ -33,13 +38,14 @@ describe("initializePluginConfig", () => {
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         });
     });
     test("extension target", () => {
         expect(
-            initializePluginConfig(
+            initializePluginConfig<Typo3ExtensionContext>(
                 { target: "extension" },
                 "/path/to/fixtures/composerProject/packages/composerExtension/",
             ),
@@ -51,25 +57,21 @@ describe("initializePluginConfig", () => {
             composerContext: {
                 type: "typo3-cms-extension",
                 path: "/path/to/fixtures/composerProject/packages/composerExtension/",
-                content: {
-                    type: "typo3-cms-extension",
-                    extra: {
-                        "typo3/cms": {
-                            "extension-key": "composer_extension",
-                        },
-                    },
-                },
+                extensionKey: "composer_extension",
             },
         });
     });
     test("error if no composer project", () => {
         expect(() => {
-            initializePluginConfig({}, "/path/to/fixtures/nonComposerProject");
+            initializePluginConfig<Typo3ProjectContext>(
+                {},
+                "/path/to/fixtures/nonComposerProject",
+            );
         }).toThrow();
     });
     test("error if target doesn't match composer project", () => {
         expect(() => {
-            initializePluginConfig(
+            initializePluginConfig<Typo3ExtensionContext>(
                 { target: "extension" },
                 "/path/to/fixtures/composerProject",
             );

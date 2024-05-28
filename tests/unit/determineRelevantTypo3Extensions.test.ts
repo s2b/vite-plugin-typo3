@@ -10,33 +10,23 @@ describe("determineRelevantTypo3Extensions", () => {
                 {
                     type: "project",
                     path: "/path/to/fixtures/composerProject",
-                    content: {},
+                    vendorDir: "vendor",
+                    webDir: "public",
                 },
                 "Configuration/ViteEntrypoints.json",
             ),
         ).toEqual([
             {
-                key: "composer_extension",
+                type: "typo3-cms-extension",
+                extensionKey: "composer_extension",
                 path: "/path/to/fixtures/composerProject/packages/composerExtension",
             },
             {
-                key: "namespace_extension",
+                type: "typo3-cms-extension",
+                extensionKey: "namespace_extension",
                 path: "/path/to/fixtures/composerProject/vendor/namespace/extension",
             },
         ]);
-    });
-
-    test("wrong composer type", () => {
-        expect(() => {
-            determineRelevantTypo3Extensions(
-                {
-                    type: "typo3-cms-extension",
-                    path: "/path/to/dummy/extension",
-                    content: {},
-                },
-                "Configuration/ViteEntrypoints.json",
-            );
-        }).toThrow();
     });
 
     test("no vendor path", () => {
@@ -45,7 +35,8 @@ describe("determineRelevantTypo3Extensions", () => {
                 {
                     type: "project",
                     path: "/path/to/fixtures/composerProjectWIthoutVendor",
-                    content: {},
+                    vendorDir: "vendor",
+                    webDir: "public",
                 },
                 "Configuration/ViteEntrypoints.json",
             );
@@ -58,7 +49,8 @@ describe("determineRelevantTypo3Extensions", () => {
                 {
                     type: "project",
                     path: "/path/to/fixtures/composerProjectInvalidVendor",
-                    content: {},
+                    vendorDir: "vendor",
+                    webDir: "public",
                 },
                 "Configuration/ViteEntrypoints.json",
             );

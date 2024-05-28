@@ -1,10 +1,9 @@
-import { resolve } from "node:path";
+import { join } from "node:path";
 import { type LibraryOptions, type PluginOption, createLogger } from "vite";
 import colors from "picocolors";
 import type {
-    ComposerContext,
     PluginConfig,
-    Typo3ExtensionInfo,
+    Typo3ExtensionContext,
     UserConfig,
 } from "./types.js";
 import {
@@ -15,17 +14,13 @@ import {
     outputDebugInformation,
 } from "./utils.js";
 
-function determineExtensionKey(composerContext: ComposerContext): string {
-    return composerContext.content["extra"]["typo3/cms"]["extension-key"] ?? "";
-}
-
 export default function typo3extension(
     userConfig: UserConfig = {},
 ): PluginOption {
     const logger = createLogger("info", { prefix: "[plugin-typo3-extension]" });
 
-    let pluginConfig: PluginConfig;
-    let extension: Typo3ExtensionInfo;
+    let pluginConfig: PluginConfig<Typo3ExtensionContext>;
+    let extension: Typo3ExtensionContext;
     let entrypoints: string[];
 
     return {
@@ -33,7 +28,10 @@ export default function typo3extension(
         apply: "build",
         config(config) {
             try {
-                pluginConfig = initializePluginConfig(userConfig, config.root);
+                pluginConfig = initializePluginConfig(
+                    userConfig,
+                    config.root ?? process.cwd(),
+                );
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
                 return;
@@ -51,15 +49,12 @@ export default function typo3extension(
 
             // Setup build destination folder
             config.build ??= {};
-            config.build.outDir ??= resolve(
+            config.build.outDir ??= join(
                 pluginConfig.composerContext.path,
                 "Resources/Public/Vite/",
             );
 
-            extension = {
-                key: determineExtensionKey(pluginConfig.composerContext),
-                path: pluginConfig.composerContext.path,
-            };
+            extension = pluginConfig.composerContext as Typo3ExtensionContext;
 
             // Add path alias for extension
             config.resolve ??= {};

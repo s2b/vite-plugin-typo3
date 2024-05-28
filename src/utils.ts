@@ -9,18 +9,19 @@ import type {
     PluginConfig,
     PluginTarget,
     UserConfig,
-    Typo3ExtensionInfo,
+    Typo3ProjectContext,
+    Typo3ExtensionContext,
 } from "./types.js";
 
-export function initializePluginConfig(
+export function initializePluginConfig<T extends ComposerContext>(
     userConfig: UserConfig,
-    root?: string,
-): PluginConfig {
+    root: string,
+): PluginConfig<T> {
     const target = userConfig.target ?? "project";
 
-    const composerContext = determineComposerContext(
+    const composerContext = determineComposerContext<T>(
         target,
-        collectComposerChain(root ?? process.cwd()),
+        collectComposerChain(root),
     );
     if (!composerContext) {
         const message =
@@ -47,14 +48,11 @@ export function collectComposerChain(path: string): ComposerContext[] {
     const composerFile = join(path, "composer.json");
     if (fs.existsSync(composerFile)) {
         const composerJson = readJsonFile(composerFile);
-        contexts.push({
-            type: composerJson.type ?? "library",
-            path,
-            content: composerJson,
-        });
+        const composerContext = createComposerContext(composerJson, path);
+        contexts.push(composerContext);
 
         // No need to check further if we already found a project root
-        if (composerJson.type === "project") {
+        if (composerContext.type === "project") {
             return contexts;
         }
     }
@@ -68,16 +66,47 @@ export function collectComposerChain(path: string): ComposerContext[] {
     return contexts;
 }
 
-export function determineComposerContext(
+export function createComposerContext(
+    json: any,
+    path: string,
+): ComposerContext {
+    switch (json.type) {
+        case "project":
+            return {
+                type: "project",
+                path,
+                vendorDir: json.config?.["vendor-dir"] ?? "vendor",
+                webDir: json.extra?.["typo3/cms"]?.["web-dir"] ?? "public",
+            };
+
+        case "typo3-cms-extension":
+            return {
+                type: "typo3-cms-extension",
+                path,
+                extensionKey:
+                    json.extra?.["typo3/cms"]?.["extension-key"] ?? "",
+            };
+
+        default:
+            return {
+                type: json.type ?? "library",
+                path,
+            };
+    }
+}
+
+export function determineComposerContext<T extends ComposerContext>(
     target: PluginTarget,
     chain: ComposerContext[],
-): ComposerContext | undefined {
+): T | undefined {
     const type = target === "extension" ? "typo3-cms-extension" : target;
-    return chain.find((context) => context.type === type);
+    return chain.find(
+        (context: ComposerContext): context is T => context.type === type,
+    );
 }
 
 export function findEntrypointsInExtensions(
-    extensions: Typo3ExtensionInfo[],
+    extensions: Typo3ExtensionContext[],
     entrypointFile: string,
     entrypointIgnorePatterns: string[],
 ): string[] {
@@ -105,20 +134,12 @@ export function findEntrypointsInExtensions(
 }
 
 export function determineRelevantTypo3Extensions(
-    composerContext: ComposerContext,
+    composerContext: Typo3ProjectContext,
     entrypointFile: string,
-): Typo3ExtensionInfo[] {
-    if (composerContext.type !== "project") {
-        throw new Error(
-            "determineRelevantTypo3Extensions can only be used for composer projects",
-        );
-    }
-
-    const vendorDir =
-        composerContext.content?.config?.["vendor-dir"] ?? "vendor";
+): Typo3ExtensionContext[] {
     const composerInstalled = join(
         composerContext.path,
-        vendorDir,
+        composerContext.vendorDir,
         "composer/installed.json",
     );
     if (!fs.existsSync(composerInstalled)) {
@@ -134,17 +155,20 @@ export function determineRelevantTypo3Extensions(
         );
     }
 
-    const installedExtensions: Typo3ExtensionInfo[] = installedPackages.packages
-        .filter((extension: any) => extension?.type === "typo3-cms-extension")
-        .map(
-            (extension: any): Typo3ExtensionInfo => ({
-                key: extension["extra"]["typo3/cms"]["extension-key"],
-                path: resolve(
-                    dirname(composerInstalled),
-                    extension["install-path"],
+    const installedExtensions: Typo3ExtensionContext[] =
+        installedPackages.packages
+            .filter(
+                (extension: any) => extension?.type === "typo3-cms-extension",
+            )
+            .map((extension: any) =>
+                createComposerContext(
+                    extension,
+                    resolve(
+                        dirname(composerInstalled),
+                        extension["install-path"],
+                    ),
                 ),
-            }),
-        );
+            );
 
     return installedExtensions.filter((extension) =>
         fs.existsSync(join(extension.path, entrypointFile)),
@@ -152,14 +176,14 @@ export function determineRelevantTypo3Extensions(
 }
 
 export function outputDebugInformation(
-    relevantExtensions: Typo3ExtensionInfo[],
+    relevantExtensions: Typo3ExtensionContext[],
     entrypoints: string[],
     composerContext: ComposerContext,
     logger: Logger,
 ): void {
     if (relevantExtensions.length) {
         const extensionList = relevantExtensions.map(
-            (extension) => extension.key,
+            (extension) => extension.extensionKey,
         );
         const aliasList = extensionList.map(
             (extensionKey) => "@" + extensionKey,
@@ -204,10 +228,10 @@ export function addRollupInputs(
 
 export function addAliases(
     alias: AliasOptions | undefined,
-    extensions: Typo3ExtensionInfo[],
+    extensions: Typo3ExtensionContext[],
 ): AliasOptions {
     const additionalAliases = extensions.map((extension) => ({
-        find: "@" + extension.key,
+        find: "@" + extension.extensionKey,
         replacement: extension.path.endsWith("/")
             ? extension.path
             : extension.path + "/",

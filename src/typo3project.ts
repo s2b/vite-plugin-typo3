@@ -1,7 +1,12 @@
-import { resolve } from "node:path";
+import { join } from "node:path";
 import { type PluginOption, createLogger } from "vite";
 import colors from "picocolors";
-import type { UserConfig, PluginConfig, Typo3ExtensionInfo } from "./types.js";
+import type {
+    UserConfig,
+    PluginConfig,
+    Typo3ProjectContext,
+    Typo3ExtensionContext,
+} from "./types.js";
 import {
     addAliases,
     addRollupInputs,
@@ -16,15 +21,19 @@ export default function typo3project(
 ): PluginOption {
     const logger = createLogger("info", { prefix: "[plugin-typo3-project]" });
 
-    let pluginConfig: PluginConfig;
-    let relevantExtensions: Typo3ExtensionInfo[];
+    let pluginConfig: PluginConfig<Typo3ProjectContext>;
+    let relevantExtensions: Typo3ExtensionContext[];
     let entrypoints: string[];
 
     return {
         name: "vite-plugin-typo3-project",
         config(config) {
             try {
-                pluginConfig = initializePluginConfig(userConfig, config.root);
+                pluginConfig = initializePluginConfig(
+                    userConfig,
+                    config.root ?? process.cwd(),
+                );
+                console.log(pluginConfig);
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
                 return;
@@ -43,9 +52,10 @@ export default function typo3project(
             // Setup build destination folder
             config.build ??= {};
             config.build.manifest ??= true;
-            config.build.outDir ??= resolve(
+            config.build.outDir ??= join(
                 pluginConfig.composerContext.path,
-                "public/_assets/vite/",
+                pluginConfig.composerContext.webDir,
+                "_assets/vite/",
             );
 
             // Extract relevant TYPO3 extensions from composer metadata

@@ -8,46 +8,38 @@ describe("determineComposerContext", () => {
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension1",
-                    content: { type: "typo3-cms-extension" },
                 },
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension2",
-                    content: { type: "typo3-cms-extension" },
                 },
                 {
                     type: "project",
                     path: "/path/to/dummy/project",
-                    content: { type: "project" },
                 },
             ]),
         ).toEqual({
             type: "project",
             path: "/path/to/dummy/project",
-            content: { type: "project" },
         });
         expect(
             determineComposerContext("extension", [
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension1",
-                    content: { type: "typo3-cms-extension" },
                 },
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension2",
-                    content: { type: "typo3-cms-extension" },
                 },
                 {
                     type: "project",
                     path: "/path/to/dummy/project",
-                    content: { type: "project" },
                 },
             ]),
         ).toEqual({
             type: "typo3-cms-extension",
             path: "/path/to/dummy/extension1",
-            content: { type: "typo3-cms-extension" },
         });
     });
     test("user-defined target with non-existing composer.json", () => {
@@ -56,12 +48,10 @@ describe("determineComposerContext", () => {
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension1",
-                    content: { type: "typo3-cms-extension" },
                 },
                 {
                     type: "typo3-cms-extension",
                     path: "/path/to/dummy/extension2",
-                    content: { type: "typo3-cms-extension" },
                 },
             ]),
         ).toBeUndefined();
@@ -70,7 +60,6 @@ describe("determineComposerContext", () => {
                 {
                     type: "project",
                     path: "/path/to/dummy/project",
-                    content: { type: "project" },
                 },
             ]),
         ).toBeUndefined();

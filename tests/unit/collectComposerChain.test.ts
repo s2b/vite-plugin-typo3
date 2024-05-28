@@ -13,19 +13,13 @@ describe("collectComposerChain", () => {
             {
                 type: "typo3-cms-extension",
                 path: "/path/to/fixtures/composerProject/packages/composerExtension",
-                content: {
-                    type: "typo3-cms-extension",
-                    extra: {
-                        "typo3/cms": {
-                            "extension-key": "composer_extension",
-                        },
-                    },
-                },
+                extensionKey: "composer_extension",
             },
             {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         ]);
     });
@@ -38,12 +32,12 @@ describe("collectComposerChain", () => {
             {
                 type: "library",
                 path: "/path/to/fixtures/composerProject/vendor/namespace/library",
-                content: { type: "library" },
             },
             {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         ]);
     });
@@ -54,7 +48,8 @@ describe("collectComposerChain", () => {
             {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         ]);
     });
@@ -65,11 +60,11 @@ describe("collectComposerChain", () => {
             {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
-                content: { type: "project" },
+                vendorDir: "vendor",
+                webDir: "public",
             },
         ]);
     });
-
     test("fail to determine composer chain from extension path", () => {
         expect(
             collectComposerChain(

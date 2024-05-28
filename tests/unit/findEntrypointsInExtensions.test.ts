@@ -11,7 +11,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(
                             __dirname,
                             "../fixtures/extensionWithOneEntrypoint",
@@ -34,7 +35,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(__dirname, "../fixtures/extensionWithGlob"),
                     },
                 ],
@@ -58,7 +60,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(
                             __dirname,
                             "../fixtures/extensionWithNonmatchingGlob",
@@ -76,7 +79,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(
                             __dirname,
                             "../fixtures/extensionWithEmptyEntrypoints",
@@ -94,7 +98,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(
                             __dirname,
                             "../fixtures/extensionWithoutEntrypoints",
@@ -112,7 +117,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(
                             __dirname,
                             "../fixtures/extensionWithDifferentFilename",
@@ -135,7 +141,8 @@ describe("findEntrypointsInExtensions", () => {
             findEntrypointsInExtensions(
                 [
                     {
-                        key: "test_extension",
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
                         path: join(__dirname, "../fixtures/extensionWithGlob"),
                     },
                 ],
