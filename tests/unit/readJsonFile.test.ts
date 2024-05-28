@@ -1,7 +1,7 @@
-import { describe, expect, test, jest } from "@jest/globals";
+import { describe, expect, test, vi } from "vitest";
 import { readJsonFile } from "../../src/utils";
 
-jest.mock("node:fs");
+vi.mock("node:fs");
 
 describe("readJsonFile", () => {
     test("read composer.json as json", () => {

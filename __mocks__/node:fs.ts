@@ -1,10 +1,13 @@
-import { jest } from "@jest/globals";
+import { vi } from "vitest";
 import { vol, type DirectoryJSON } from "memfs";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const fs = jest.requireActual<typeof import("node:fs")>(`node:fs`);
+const fs = await vi.importActual<typeof import("node:fs")>("node:fs");
 
-const fixturePath = resolve(__dirname, "../fixtures");
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+const fixturePath = resolve(__dirname, "../tests/unit/fixtures");
 const fixtureMount = "/path/to/fixtures";
 
 function createFixtureDirectoryStructure(

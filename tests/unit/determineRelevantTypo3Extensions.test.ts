@@ -1,7 +1,7 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, test, expect, vi } from "vitest";
 import { determineRelevantTypo3Extensions } from "../../src/utils";
 
-jest.mock("node:fs");
+vi.mock("node:fs");
 
 describe("determineRelevantTypo3Extensions", () => {
     test("determineRelevantTypo3Extensions", () => {

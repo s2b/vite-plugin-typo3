@@ -1,9 +1,12 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "vitest";
 import { findEntrypointsInExtensions } from "../../src/utils";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Tests use the actual filesystem because of an issue in fast-glob
-// jest.mock("node:fs");
+// vi.mock("node:fs");
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 describe("findEntrypointsInExtensions", () => {
     test("extension with one entrypoint", () => {
@@ -15,7 +18,7 @@ describe("findEntrypointsInExtensions", () => {
                         extensionKey: "test_extension",
                         path: join(
                             __dirname,
-                            "../fixtures/extensionWithOneEntrypoint",
+                            "fixtures/extensionWithOneEntrypoint",
                         ),
                     },
                 ],
@@ -25,7 +28,7 @@ describe("findEntrypointsInExtensions", () => {
         ).toEqual([
             join(
                 __dirname,
-                "../fixtures/extensionWithOneEntrypoint/Resources/Private/Main.entry.js",
+                "fixtures/extensionWithOneEntrypoint/Resources/Private/Main.entry.js",
             ),
         ]);
     });
@@ -37,7 +40,7 @@ describe("findEntrypointsInExtensions", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: join(__dirname, "../fixtures/extensionWithGlob"),
+                        path: join(__dirname, "fixtures/extensionWithGlob"),
                     },
                 ],
                 "Configuration/ViteEntrypoints.json",
@@ -46,11 +49,11 @@ describe("findEntrypointsInExtensions", () => {
         ).toEqual([
             join(
                 __dirname,
-                "../fixtures/extensionWithGlob/Resources/Private/Alt.entry.js",
+                "fixtures/extensionWithGlob/Resources/Private/Alt.entry.js",
             ),
             join(
                 __dirname,
-                "../fixtures/extensionWithGlob/Resources/Private/Main.entry.js",
+                "fixtures/extensionWithGlob/Resources/Private/Main.entry.js",
             ),
         ]);
     });
@@ -64,7 +67,7 @@ describe("findEntrypointsInExtensions", () => {
                         extensionKey: "test_extension",
                         path: join(
                             __dirname,
-                            "../fixtures/extensionWithNonmatchingGlob",
+                            "fixtures/extensionWithNonmatchingGlob",
                         ),
                     },
                 ],
@@ -83,7 +86,7 @@ describe("findEntrypointsInExtensions", () => {
                         extensionKey: "test_extension",
                         path: join(
                             __dirname,
-                            "../fixtures/extensionWithEmptyEntrypoints",
+                            "fixtures/extensionWithEmptyEntrypoints",
                         ),
                     },
                 ],
@@ -102,7 +105,7 @@ describe("findEntrypointsInExtensions", () => {
                         extensionKey: "test_extension",
                         path: join(
                             __dirname,
-                            "../fixtures/extensionWithoutEntrypoints",
+                            "fixtures/extensionWithoutEntrypoints",
                         ),
                     },
                 ],
@@ -121,7 +124,7 @@ describe("findEntrypointsInExtensions", () => {
                         extensionKey: "test_extension",
                         path: join(
                             __dirname,
-                            "../fixtures/extensionWithDifferentFilename",
+                            "fixtures/extensionWithDifferentFilename",
                         ),
                     },
                 ],
@@ -131,7 +134,7 @@ describe("findEntrypointsInExtensions", () => {
         ).toEqual([
             join(
                 __dirname,
-                "../fixtures/extensionWithDifferentFilename/Resources/Private/Main.entry.js",
+                "fixtures/extensionWithDifferentFilename/Resources/Private/Main.entry.js",
             ),
         ]);
     });
@@ -143,7 +146,7 @@ describe("findEntrypointsInExtensions", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: join(__dirname, "../fixtures/extensionWithGlob"),
+                        path: join(__dirname, "fixtures/extensionWithGlob"),
                     },
                 ],
                 "Configuration/ViteEntrypoints.json",
@@ -152,7 +155,7 @@ describe("findEntrypointsInExtensions", () => {
         ).toEqual([
             join(
                 __dirname,
-                "../fixtures/extensionWithGlob/Resources/Private/Alt.entry.js",
+                "fixtures/extensionWithGlob/Resources/Private/Alt.entry.js",
             ),
         ]);
     });

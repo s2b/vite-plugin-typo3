@@ -1,7 +1,7 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, test, expect, vi } from "vitest";
 import { collectComposerChain } from "../../src/utils";
 
-jest.mock("node:fs");
+vi.mock("node:fs");
 
 describe("collectComposerChain", () => {
     test("determines composer chain from extension path", () => {

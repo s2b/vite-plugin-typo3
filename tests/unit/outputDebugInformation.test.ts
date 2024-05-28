@@ -1,16 +1,16 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, test, expect, vi } from "vitest";
 import { outputDebugInformation } from "../../src/utils";
 import { type Logger } from "vite";
 import colors from "picocolors";
 
 function mockLogger(): Logger {
     return {
-        info: jest.fn<jest.Mock<Logger["info"]>>(),
-        warn: jest.fn<Logger["warn"]>(),
-        warnOnce: jest.fn<Logger["warnOnce"]>(),
-        error: jest.fn<Logger["error"]>(),
-        clearScreen: jest.fn<Logger["clearScreen"]>(),
-        hasErrorLogged: jest.fn<Logger["hasErrorLogged"]>(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        warnOnce: vi.fn(),
+        error: vi.fn(),
+        clearScreen: vi.fn(),
+        hasErrorLogged: vi.fn(),
         hasWarned: false,
     };
 }

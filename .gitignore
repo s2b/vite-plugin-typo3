@@ -1,4 +1,4 @@
 node_modules
 dist
-tests/distribution/**/package-lock.json
+coverage
 tests/distribution/**/public

@@ -33,7 +33,6 @@ export default function typo3project(
                     userConfig,
                     config.root ?? process.cwd(),
                 );
-                console.log(pluginConfig);
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
                 return;

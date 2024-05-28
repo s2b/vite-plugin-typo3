@@ -32,12 +32,12 @@
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "test": "jest",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:distribution": "npm run test:distribution:cjs && npm run test:distribution:esm && npm run test:distribution:ts",
-    "test:distribution:cjs": "cd tests/distribution/javascript-cjs/ && npm install && npm run build",
-    "test:distribution:esm": "cd tests/distribution/javascript-esm/ && npm install && npm run build",
-    "test:distribution:ts": "cd tests/distribution/typescript/ && npm install && npm run build && npm run typecheck",
-    "test:coverage": "jest --collect-coverage"
+    "test:distribution:cjs": "cd tests/distribution/javascript-cjs/ && npm install --package-lock=false && npm run build",
+    "test:distribution:esm": "cd tests/distribution/javascript-esm/ && npm install --package-lock=false && npm run build",
+    "test:distribution:ts": "cd tests/distribution/typescript/ && npm install --package-lock=false && npm run build && npm run typecheck"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",
@@ -48,13 +48,12 @@
     "vite": "^5.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@types/node": "^20.8.2",
-    "jest": "^29.7.0",
+    "@vitest/coverage-v8": "^1.6.0",
     "memfs": "^4.9.2",
     "prettier": "^3.0.3",
-    "ts-jest": "^29.1.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vitest": "^1.6.0"
   }
 }

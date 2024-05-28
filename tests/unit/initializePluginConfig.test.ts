@@ -1,8 +1,8 @@
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, test, expect, vi } from "vitest";
 import { initializePluginConfig } from "../../src/utils";
 import { Typo3ExtensionContext, Typo3ProjectContext } from "../../src/types";
 
-jest.mock("node:fs");
+vi.mock("node:fs");
 
 describe("initializePluginConfig", () => {
     test("empty user settings", () => {
