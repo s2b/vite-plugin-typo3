@@ -77,6 +77,24 @@ export default function typo3project(
                 pluginConfig.entrypointIgnorePatterns,
             );
 
+            // Don't watch files in irrelevant/temporary TYPO3 directories
+            // This prevents performance issues and avoids file system problems
+            config.server ??= {};
+            config.server.watch ??= {};
+            config.server.watch.ignored = [
+                "**/.ddev/**",
+                "**/var/cache/**",
+                "**/var/charset/**",
+                "**/var/labels/**",
+                "**/var/lock/**",
+                "**/var/log/**",
+                "**/var/session/**",
+                "**/var/transient/**",
+                "**/fileadmin/**",
+                "**/typo3temp/**",
+                "**/_processed_/**",
+            ];
+
             if (!entrypoints.length) {
                 logger.warn(
                     colors.red(
