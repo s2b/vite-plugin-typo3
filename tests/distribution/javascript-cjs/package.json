@@ -2,7 +2,7 @@
   "name": "typo3-plugin-javascript-cjs-test",
   "devDependencies": {
     "vite": "^5.2.11",
-    "vite-plugin-typo3": "file:../../../"
+    "vite-plugin-typo3": "file:../package/"
   },
   "scripts": {
     "build": "vite build"

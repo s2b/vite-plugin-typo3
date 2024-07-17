@@ -4,7 +4,7 @@
   "devDependencies": {
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
-    "vite-plugin-typo3": "file:../../../"
+    "vite-plugin-typo3": "file:../package/"
   },
   "scripts": {
     "build": "vite build",

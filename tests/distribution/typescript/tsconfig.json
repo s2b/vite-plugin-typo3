@@ -8,6 +8,7 @@
         "moduleDetection": "force",
         "strict": true,
         "noUncheckedIndexedAccess": true,
+        "preserveSymlinks": true,
 
         "moduleResolution": "nodenext",
         "module": "nodenext",

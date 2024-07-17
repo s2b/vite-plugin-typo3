@@ -1,6 +1,8 @@
 node_modules
 dist
 coverage
+tests/distribution/package
+tests/distribution/vite-plugin-typo3*.tgz
 tests/distribution/**/public
 tests/integration/project/public
 tests/integration/project/packages/test_extension/Resources/Public
