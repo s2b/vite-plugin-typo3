@@ -3,9 +3,6 @@
 This vite plugin collects entrypoints from TYPO3 extensions in a composer-based
 TYPO3 setup.
 
-**Please note that this is still under development and might introduce breaking
-changes anytime!**
-
 ## Installation
 
 ```sh
