@@ -80,8 +80,9 @@ export function createComposerContext(
             };
 
         case "typo3-cms-extension":
+        case "typo3-contentblock":
             return {
-                type: "typo3-cms-extension",
+                type: json.type,
                 path,
                 extensionKey:
                     json.extra?.["typo3/cms"]?.["extension-key"] ?? "",
@@ -158,7 +159,7 @@ export function determineRelevantTypo3Extensions(
     const installedExtensions: Typo3ExtensionContext[] =
         installedPackages.packages
             .filter(
-                (extension: any) => extension?.type === "typo3-cms-extension",
+                (extension: any) => extension?.type === "typo3-cms-extension" || extension?.type === "typo3-contentblock",
             )
             .map((extension: any) =>
                 createComposerContext(

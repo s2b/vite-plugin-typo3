@@ -22,7 +22,7 @@ export interface ComposerContext {
 }
 
 export interface Typo3ExtensionContext extends ComposerContext {
-    type: "typo3-cms-extension";
+    type: "typo3-cms-extension" | "typo3-contentblock";
     extensionKey: string;
 }
 
