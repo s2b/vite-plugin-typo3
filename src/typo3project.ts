@@ -121,7 +121,7 @@ export default function typo3project(
                 );
             }
 
-            if (pluginConfig.debug) {
+            if (pluginConfig && pluginConfig.debug) {
                 outputDebugInformation(
                     relevantExtensions,
                     entrypoints,
