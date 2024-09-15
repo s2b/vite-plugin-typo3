@@ -112,6 +112,10 @@ export default function typo3project(
             );
         },
         configResolved(config) {
+            if (!pluginConfig) {
+                return;
+            }
+
             if (config.build.manifest === false) {
                 logger.warn(
                     colors.red(
@@ -121,7 +125,7 @@ export default function typo3project(
                 );
             }
 
-            if (pluginConfig && pluginConfig.debug) {
+            if (pluginConfig.debug) {
                 outputDebugInformation(
                     relevantExtensions,
                     entrypoints,
