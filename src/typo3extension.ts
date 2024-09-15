@@ -87,7 +87,7 @@ export default function typo3extension(
             };
         },
         configResolved() {
-            if (pluginConfig.debug) {
+            if (pluginConfig && pluginConfig.debug) {
                 outputDebugInformation(
                     [extension],
                     entrypoints,
