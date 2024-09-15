@@ -26,7 +26,7 @@ export function initializePluginConfig<T extends ComposerContext>(
     if (!composerContext) {
         const message =
             target === "project"
-                ? 'No composer project could be found in parent directories. If you only want to bundle assets of a single extension, make sure to set "target" to "extension".'
+                ? 'No composer project could be found in parent directories. Make sure to set "type": "project" in your root composer.json.'
                 : "No extension composer file could be found in parent directories. Make sure that your extension has a valid composer file.";
         throw new Error(message);
     }
