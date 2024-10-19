@@ -81,7 +81,7 @@ export default function typo3project(
             // This prevents performance issues and avoids file system problems
             config.server ??= {};
             config.server.watch ??= {};
-            config.server.watch.ignored = [
+            config.server.watch.ignored ??= [
                 "**/.ddev/**",
                 "**/var/cache/**",
                 "**/var/charset/**",
