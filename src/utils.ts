@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type { InputOption } from "rollup";
-import type { AliasOptions, Logger } from "vite";
+import type { Alias, AliasOptions, Logger } from "vite";
 import fg from "fast-glob";
 import colors from "picocolors";
 import type {
@@ -185,8 +185,10 @@ export function outputDebugInformation(
         const extensionList = relevantExtensions.map(
             (extension) => extension.extensionKey,
         );
-        const aliasList = extensionList.map(
-            (extensionKey) => "@" + extensionKey,
+        const aliasList = extensionList.reduce(
+            (aliasList: string[], extensionKey) =>
+                aliasList.concat(["@" + extensionKey, "EXT:" + extensionKey]),
+            [],
         );
         logger.info(
             `The following extensions with vite entrypoints have been recognized: ${colors.green(extensionList.join(", "))}`,
@@ -230,12 +232,20 @@ export function addAliases(
     alias: AliasOptions | undefined,
     extensions: Typo3ExtensionContext[],
 ): AliasOptions {
-    const additionalAliases = extensions.map((extension) => ({
-        find: "@" + extension.extensionKey,
-        replacement: extension.path.endsWith("/")
-            ? extension.path
-            : extension.path + "/",
-    }));
+    const additionalAliases = extensions.reduce(
+        (aliases: Alias[], extension) => {
+            const replacement = extension.path.endsWith("/")
+                ? extension.path
+                : extension.path + "/";
+            aliases.push({ find: "@" + extension.extensionKey, replacement });
+            aliases.push({
+                find: "EXT:" + extension.extensionKey,
+                replacement,
+            });
+            return aliases;
+        },
+        [],
+    );
 
     alias ??= [];
     if (!Array.isArray(alias)) {
