@@ -49,7 +49,9 @@ describe("outputDebugInformation", () => {
         expect(logger.info).toHaveBeenNthCalledWith(
             2,
             "The following aliases have been defined: " +
-                colors.green("@test_extension1, @test_extension2"),
+                colors.green(
+                    "@test_extension1, EXT:test_extension1, @test_extension2, EXT:test_extension2",
+                ),
             { timestamp: true },
         );
         expect(logger.info).toHaveBeenNthCalledWith(
