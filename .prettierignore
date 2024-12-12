@@ -1,3 +1,4 @@
 /dist
 /tests/unit/fixtures/invalid.json
 manifest-expected.json
+README.md
