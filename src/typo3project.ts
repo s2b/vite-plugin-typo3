@@ -40,6 +40,7 @@ export default function typo3project(
                 "**/var/lock/**",
                 "**/var/log/**",
                 "**/var/session/**",
+                "**/var/tests/**",
                 "**/var/transient/**",
                 "**/fileadmin/**",
                 "**/typo3temp/**",
