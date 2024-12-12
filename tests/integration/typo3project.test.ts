@@ -36,7 +36,7 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[2] as OutputAsset).fileName).toMatchInlineSnapshot(
-        `"assets/Main-CAg0JlTy.css"`,
+        `"assets/Main-VWk4xp3e.css"`,
     );
     expect((sortedOutput[2] as OutputAsset).source).toMatchInlineSnapshot(`
       "body{background:red}
@@ -44,7 +44,7 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[3] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Main.entry-Cy860-05.js"`,
+        `"assets/Main.entry-BSYxZrtl.js"`,
     );
     expect((sortedOutput[3] as OutputChunk).code).toMatchInlineSnapshot(`
       "console.log("Main.ts");
@@ -52,7 +52,7 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[4] as OutputAsset).fileName).toMatchInlineSnapshot(
-        `"assets/Vendor-CVaSH70M.css"`,
+        `"assets/Vendor-DE25tVp9.css"`,
     );
     expect((sortedOutput[4] as OutputAsset).source).toMatchInlineSnapshot(`
       "body{background:#00f}
@@ -60,7 +60,7 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[5] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Vendor.entry-CxSfYUEX.js"`,
+        `"assets/Vendor.entry-BTvEMMs0.js"`,
     );
     expect((sortedOutput[5] as OutputChunk).code).toMatchInlineSnapshot(`
       "console.log("Vendor.ts");
