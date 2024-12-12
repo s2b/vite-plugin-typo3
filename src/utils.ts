@@ -261,3 +261,20 @@ export function addAliases(
 export function readJsonFile(file: string): any {
     return JSON.parse(fs.readFileSync(file, "utf-8"));
 }
+
+export function getDefaultIgnoreList(): string[] {
+    return [
+        "**/.ddev/**",
+        "**/var/cache/**",
+        "**/var/charset/**",
+        "**/var/labels/**",
+        "**/var/lock/**",
+        "**/var/log/**",
+        "**/var/session/**",
+        "**/var/tests/**",
+        "**/var/transient/**",
+        "**/fileadmin/**",
+        "**/typo3temp/**",
+        "**/_processed_/**",
+    ];
+}

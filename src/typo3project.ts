@@ -12,6 +12,7 @@ import {
     addRollupInputs,
     determineRelevantTypo3Extensions,
     findEntrypointsInExtensions,
+    getDefaultIgnoreList,
     initializePluginConfig,
     outputDebugInformation,
 } from "./utils.js";
@@ -32,20 +33,7 @@ export default function typo3project(
             // This prevents performance issues and avoids file system problems
             config.server ??= {};
             config.server.watch ??= {};
-            config.server.watch.ignored ??= [
-                "**/.ddev/**",
-                "**/var/cache/**",
-                "**/var/charset/**",
-                "**/var/labels/**",
-                "**/var/lock/**",
-                "**/var/log/**",
-                "**/var/session/**",
-                "**/var/tests/**",
-                "**/var/transient/**",
-                "**/fileadmin/**",
-                "**/typo3temp/**",
-                "**/_processed_/**",
-            ];
+            config.server.watch.ignored ??= getDefaultIgnoreList();
 
             try {
                 pluginConfig = initializePluginConfig(
