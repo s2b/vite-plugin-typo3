@@ -10,6 +10,7 @@ import {
     addAliases,
     addRollupInputs,
     findEntrypointsInExtensions,
+    getDefaultIgnoreList,
     initializePluginConfig,
     outputDebugInformation,
 } from "./utils.js";
@@ -27,6 +28,12 @@ export default function typo3extension(
         name: "vite-plugin-typo3-extension",
         apply: "build",
         config(config) {
+            // Don't watch files in irrelevant/temporary TYPO3 directories
+            // This prevents performance issues and avoids file system problems
+            config.server ??= {};
+            config.server.watch ??= {};
+            config.server.watch.ignored ??= getDefaultIgnoreList();
+
             try {
                 pluginConfig = initializePluginConfig(
                     userConfig,
