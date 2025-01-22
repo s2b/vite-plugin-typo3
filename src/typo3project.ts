@@ -10,7 +10,7 @@ import type {
 import {
     addAliases,
     addRollupInputs,
-    determineRelevantTypo3Extensions,
+    determineAvailableTypo3Extensions,
     findEntrypointsInExtensions,
     getDefaultIgnoreList,
     initializePluginConfig,
@@ -23,7 +23,7 @@ export default function typo3project(
     const logger = createLogger("info", { prefix: "[plugin-typo3-project]" });
 
     let pluginConfig: PluginConfig<Typo3ProjectContext>;
-    let relevantExtensions: Typo3ExtensionContext[];
+    let availableExtensions: Typo3ExtensionContext[];
     let entrypoints: string[];
 
     return {
@@ -78,21 +78,20 @@ export default function typo3project(
             );
 
             // Extract relevant TYPO3 extensions from composer metadata
-            relevantExtensions = determineRelevantTypo3Extensions(
+            availableExtensions = determineAvailableTypo3Extensions(
                 pluginConfig.composerContext,
-                pluginConfig.entrypointFile,
             );
 
             // Add path alias for each extension
             config.resolve ??= {};
             config.resolve.alias = addAliases(
                 config.resolve.alias,
-                relevantExtensions,
+                availableExtensions,
             );
 
             // Find all vite entrypoints in relevant TYPO3 extensions
             entrypoints = findEntrypointsInExtensions(
-                relevantExtensions,
+                availableExtensions,
                 pluginConfig.entrypointFile,
                 pluginConfig.entrypointIgnorePatterns,
             );
@@ -129,7 +128,7 @@ export default function typo3project(
 
             if (pluginConfig.debug) {
                 outputDebugInformation(
-                    relevantExtensions,
+                    availableExtensions,
                     entrypoints,
                     pluginConfig.composerContext,
                     logger,

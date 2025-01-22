@@ -42,7 +42,7 @@ describe("outputDebugInformation", () => {
         expect(logger.info).toHaveBeenCalledTimes(3);
         expect(logger.info).toHaveBeenNthCalledWith(
             1,
-            "The following extensions with vite entrypoints have been recognized: " +
+            "The following TYPO3 extensions have been recognized: " +
                 colors.green("test_extension1, test_extension2"),
             { timestamp: true },
         );
