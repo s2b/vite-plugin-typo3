@@ -133,9 +133,8 @@ export function findEntrypointsInExtensions(
     return entrypoints;
 }
 
-export function determineRelevantTypo3Extensions(
+export function determineAvailableTypo3Extensions(
     composerContext: Typo3ProjectContext,
-    entrypointFile: string,
 ): Typo3ExtensionContext[] {
     const composerInstalled = join(
         composerContext.path,
@@ -170,19 +169,17 @@ export function determineRelevantTypo3Extensions(
                 ),
             );
 
-    return installedExtensions.filter((extension) =>
-        fs.existsSync(join(extension.path, entrypointFile)),
-    );
+    return installedExtensions;
 }
 
 export function outputDebugInformation(
-    relevantExtensions: Typo3ExtensionContext[],
+    availableExtensions: Typo3ExtensionContext[],
     entrypoints: string[],
     composerContext: ComposerContext,
     logger: Logger,
 ): void {
-    if (relevantExtensions.length) {
-        const extensionList = relevantExtensions.map(
+    if (availableExtensions.length) {
+        const extensionList = availableExtensions.map(
             (extension) => extension.extensionKey,
         );
         const aliasList = extensionList.reduce(
@@ -191,7 +188,7 @@ export function outputDebugInformation(
             [],
         );
         logger.info(
-            `The following extensions with vite entrypoints have been recognized: ${colors.green(extensionList.join(", "))}`,
+            `The following TYPO3 extensions have been recognized: ${colors.green(extensionList.join(", "))}`,
             { timestamp: true },
         );
         logger.info(
