@@ -28,7 +28,7 @@ export default function typo3project(
 
     return {
         name: "vite-plugin-typo3-project",
-        config(config) {
+        config(config, env) {
             // Don't watch files in irrelevant/temporary TYPO3 directories
             // This prevents performance issues and avoids file system problems
             config.server ??= {};
@@ -43,6 +43,15 @@ export default function typo3project(
             } catch (err: any) {
                 logger.error(colors.red(err.message), { timestamp: true });
                 return;
+            }
+
+            if (env.command === "serve" && env.mode === "production") {
+                logger.warn(
+                    colors.yellow(
+                        "Running the dev server with vite-plugin-typo3 in production mode is not recommended and might have security implications.",
+                    ),
+                    { timestamp: true },
+                );
             }
 
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
