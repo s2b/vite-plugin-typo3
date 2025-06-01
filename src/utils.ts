@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type { InputOption } from "rollup";
-import type { Alias, AliasOptions, Logger } from "vite";
+import {
+    type Alias,
+    type AliasOptions,
+    type Logger,
+    defaultAllowedOrigins,
+} from "vite";
 import { globSync } from "tinyglobby";
 import colors from "picocolors";
 import type {
@@ -272,4 +277,8 @@ export function getDefaultIgnoreList(): string[] {
         "**/typo3temp/**",
         "**/_processed_/**",
     ];
+}
+
+export function getDefaultAllowedOrigins(): RegExp[] {
+    return [defaultAllowedOrigins, /^https?:\/\/.*\.ddev\.site(:\d+)?$/];
 }

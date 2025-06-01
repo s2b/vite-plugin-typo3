@@ -3,7 +3,7 @@ import type { UserConfig } from "./types.js";
 import typo3project from "./typo3project.js";
 import typo3extension from "./typo3extension.js";
 import { PluginOption } from "vite";
-import { getDefaultIgnoreList } from "./utils.js";
+import { getDefaultIgnoreList, getDefaultAllowedOrigins } from "./utils.js";
 
 export default function typo3(userConfig: UserConfig = {}): PluginOption[] {
     if (userConfig.target === "extension") {
@@ -13,4 +13,4 @@ export default function typo3(userConfig: UserConfig = {}): PluginOption[] {
     }
 }
 
-export { getDefaultIgnoreList };
+export { getDefaultIgnoreList, getDefaultAllowedOrigins };

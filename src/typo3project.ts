@@ -12,6 +12,7 @@ import {
     addRollupInputs,
     determineAvailableTypo3Extensions,
     findEntrypointsInExtensions,
+    getDefaultAllowedOrigins,
     getDefaultIgnoreList,
     initializePluginConfig,
     outputDebugInformation,
@@ -56,7 +57,9 @@ export default function typo3project(
 
             // Disable CORS header since this plugin is only used in development mode
             config.server ??= {};
-            config.server.cors ??= true;
+            config.server.cors ??= {
+                origin: getDefaultAllowedOrigins(),
+            };
 
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
