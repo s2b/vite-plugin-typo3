@@ -11,6 +11,11 @@ test("vite build works for TYPO3 extension", async () => {
     const output = await build({
         root,
         plugins: [typo3({ target: "extension" })],
+        build: {
+            lib: {
+                cssFileName: "style",
+            },
+        },
     });
 
     expect(output).toHaveLength(2);
