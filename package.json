@@ -41,8 +41,8 @@
     "test:distribution:ts": "cd tests/distribution/typescript/ && npm install --package-lock=false && npm run build && npm run typecheck"
   },
   "dependencies": {
-    "fast-glob": "^3.3.2",
     "picocolors": "^1.0.1",
+    "tinyglobby": "^0.2.14",
     "vite-plugin-auto-origin": "^1.1.0"
   },
   "peerDependencies": {

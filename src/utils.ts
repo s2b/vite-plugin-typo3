@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type { InputOption } from "rollup";
 import type { Alias, AliasOptions, Logger } from "vite";
-import fg from "fast-glob";
+import { globSync } from "tinyglobby";
 import colors from "picocolors";
 import type {
     ComposerContext,
@@ -120,13 +120,11 @@ export function findEntrypointsInExtensions(
             resolve(dirname(file), pattern),
         );
         entrypoints = entrypoints.concat(
-            fg.globSync(patterns, {
+            globSync(patterns, {
                 cwd: dirname(file),
                 ignore: entrypointIgnorePatterns,
                 absolute: true,
-                // This doesn't seem to work correctly, which is why tests
-                // use the actual file system for now
-                // fs,
+                expandDirectories: false,
             }),
         );
     });

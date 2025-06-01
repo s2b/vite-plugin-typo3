@@ -150,7 +150,7 @@ describe("findEntrypointsInExtensions", () => {
                     },
                 ],
                 "Configuration/ViteEntrypoints.json",
-                ["**/Main.entry.js"],
+                ["*(../)**/Main.entry.js"],
             ),
         ).toEqual([
             join(
