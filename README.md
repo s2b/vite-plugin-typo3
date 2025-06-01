@@ -76,3 +76,27 @@ You can provide additional configuration to the plugin, for example:
     file to provide entrypoints from extensions.
 -   `entrypointIgnorePatterns` (array, default: `["**/node_modules/**", "**/.git/**"]`): Files
     that should be ignored when using wildcards in `ViteEntrypoints.json`.
+
+### Extending Watcher Ignore List
+
+The plugin comes with a reasonable list of files that should be ignored by the vite watcher
+process, which can speed up local development considerably. In some circumstances, it might be
+helpful to extend this list. For that purpose, the default list is exposed as a separate
+function to be used directly in the project's `vite.config.js` file. The following example
+would skip any html files in the project, while retaining the default ignores:
+
+```js
+import { defineConfig } from "vite"
+import typo3, { getDefaultIgnoreList } from "vite-plugin-typo3"
+
+export default defineConfig({
+    plugins: [ typo3() ],
+    server: {
+        watch: {
+            ignored: [
+                ...getDefaultIgnoreList(),
+                "**/*.html",
+            ],
+        },
+    },
+});
