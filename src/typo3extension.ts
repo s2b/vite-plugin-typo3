@@ -89,6 +89,7 @@ export default function typo3extension(
             const lib: LibraryOptions | undefined =
                 config.build.lib !== false ? config.build.lib : undefined;
             config.build.lib = {
+                formats: ['es', 'cjs'],
                 ...lib,
                 entry: addRollupInputs(lib?.entry, entrypoints),
             };
