@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-typo3",
-  "version": "1-dev",
+  "version": "2-dev",
   "description": "Vite plugin to collect assets from TYPO3 extensions",
   "author": "Simon Praetorius",
   "license": "MIT",
