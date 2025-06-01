@@ -55,7 +55,7 @@ export default function typo3project(
                 );
             }
 
-            // Disable CORS header since this plugin is only used in development mode
+            // Set CORS headers to prevent leakage of source code to third-parties
             config.server ??= {};
             config.server.cors ??= {
                 origin: getDefaultAllowedOrigins(),
