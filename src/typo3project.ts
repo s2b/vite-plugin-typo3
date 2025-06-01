@@ -61,6 +61,15 @@ export default function typo3project(
                 origin: getDefaultAllowedOrigins(),
             };
 
+            // Allow access to vite dev server through reverse proxy in DDEV setups
+            if (
+                process.env.IS_DDEV_PROJECT &&
+                config.server.allowedHosts !== true
+            ) {
+                config.server.allowedHosts ??= [];
+                config.server.allowedHosts.push(".ddev.site");
+            }
+
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
 
