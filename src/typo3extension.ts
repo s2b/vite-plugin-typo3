@@ -24,6 +24,16 @@ export default function typo3extension(
     let extension: Typo3ExtensionContext;
     let entrypoints: string[];
 
+    try {
+        pluginConfig = initializePluginConfig({
+            userConfig,
+            root: process.cwd(),
+        });
+    } catch (err: any) {
+        logger.error(colors.red(err.mesage), { timestamp: true });
+        return;
+    }
+
     return {
         name: "vite-plugin-typo3-extension",
         apply: "build",
@@ -33,16 +43,6 @@ export default function typo3extension(
             config.server ??= {};
             config.server.watch ??= {};
             config.server.watch.ignored ??= getDefaultIgnoreList();
-
-            try {
-                pluginConfig = initializePluginConfig({
-                    userConfig,
-                    root: config.root ?? process.cwd(),
-                });
-            } catch (err: any) {
-                logger.error(colors.red(err.mesage), { timestamp: true });
-                return;
-            }
 
             // Set empty base path to enable relative paths in generated assets (e. g. CSS files)
             config.base ??= "";
@@ -56,6 +56,7 @@ export default function typo3extension(
 
             // Setup build destination folder
             config.build ??= {};
+            config.build.copyPublicDir ??= false;
             config.build.outDir ??= join(
                 pluginConfig.composerContext.path,
                 "Resources/Public/Vite/",
