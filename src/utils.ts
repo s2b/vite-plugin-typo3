@@ -19,11 +19,14 @@ import type {
     AliasConfig,
 } from "./types.js";
 
-export function initializePluginConfig<T extends ComposerContext>(
-    userConfig: UserConfig,
-    root: string,
-): PluginConfig<T> {
-    const target = userConfig.target ?? "project";
+export function initializePluginConfig<T extends ComposerContext>({
+    userConfig,
+    root,
+}: {
+    userConfig?: UserConfig;
+    root: string;
+}): PluginConfig<T> {
+    const target = userConfig?.target ?? "project";
 
     const composerContext = determineComposerContext<T>(
         target,
@@ -44,7 +47,7 @@ export function initializePluginConfig<T extends ComposerContext>(
         debug: false,
         composerContext,
         aliases: true,
-        ...userConfig,
+        ...(userConfig ?? {}),
     };
 }
 
@@ -177,18 +180,24 @@ export function determineAvailableTypo3Extensions(
     return installedExtensions;
 }
 
-export function outputDebugInformation(
-    availableExtensions: Typo3ExtensionContext[],
-    entrypoints: string[],
-    composerContext: ComposerContext,
-    logger: Logger,
-    aliasConfig: AliasConfig = true,
-): void {
+export function outputDebugInformation({
+    availableExtensions,
+    entrypoints,
+    composerContext,
+    logger,
+    aliasConfig,
+}: {
+    availableExtensions: Typo3ExtensionContext[];
+    entrypoints: string[];
+    composerContext: ComposerContext;
+    logger: Logger;
+    aliasConfig: AliasConfig,
+}): void {
     if (availableExtensions.length) {
         const extensionList = availableExtensions.map(
             (extension) => extension.extensionKey,
         );
-        const aliasList = createAliases(availableExtensions, aliasConfig).map(
+        const aliasList = createAliases(availableExtensions, aliasConfig ?? true).map(
             (alias) => alias.find,
         );
         logger.info(

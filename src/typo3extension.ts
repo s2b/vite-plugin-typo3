@@ -35,10 +35,10 @@ export default function typo3extension(
             config.server.watch.ignored ??= getDefaultIgnoreList();
 
             try {
-                pluginConfig = initializePluginConfig(
+                pluginConfig = initializePluginConfig({
                     userConfig,
-                    config.root ?? process.cwd(),
-                );
+                    root: config.root ?? process.cwd(),
+                });
             } catch (err: any) {
                 logger.error(colors.red(err.mesage), { timestamp: true });
                 return;
@@ -98,13 +98,13 @@ export default function typo3extension(
         },
         configResolved() {
             if (pluginConfig && pluginConfig.debug) {
-                outputDebugInformation(
-                    [extension],
+                outputDebugInformation({
+                    availableExtensions: [extension],
                     entrypoints,
-                    pluginConfig.composerContext,
+                    composerContext: pluginConfig.composerContext,
                     logger,
-                    pluginConfig.aliases,
-                );
+                    aliasConfig: pluginConfig.aliases,
+                });
             }
         },
     };
