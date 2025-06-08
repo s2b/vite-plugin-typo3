@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { type PluginOption, createLogger } from "vite";
+import { type PluginOption, createLogger, mergeConfig } from "vite";
 import colors from "picocolors";
 import type {
     UserConfig,
@@ -10,42 +10,64 @@ import type {
 import {
     addAliases,
     addRollupInputs,
+    checkVitePlugins,
     determineAvailableTypo3Extensions,
     findEntrypointsInExtensions,
     getDefaultAllowedOrigins,
     getDefaultIgnoreList,
+    getExtensionConfigs,
     initializePluginConfig,
     outputDebugInformation,
 } from "./utils.js";
 
-export default function typo3project(
+export default async function typo3project(
     userConfig: UserConfig = {},
-): PluginOption {
+): Promise<PluginOption> {
     const logger = createLogger("info", { prefix: "[plugin-typo3-project]" });
 
     let pluginConfig: PluginConfig<Typo3ProjectContext>;
     let availableExtensions: Typo3ExtensionContext[];
+    let availableConfigs: Record<string, any> = {};
+    let pluginsFromExtensions: PluginOption[] = [];
     let entrypoints: string[];
 
-    return {
+    try {
+        pluginConfig = initializePluginConfig({
+            userConfig,
+            root: process.cwd(),
+        });
+    } catch (err: any) {
+        logger.error(colors.red(err.message), { timestamp: true });
+        return;
+    }
+
+    // Extract relevant TYPO3 extensions from composer metadata
+    availableExtensions = determineAvailableTypo3Extensions(
+        pluginConfig.composerContext,
+    );
+
+    // Import configurations from TYPO3 extensions if available and merge them
+    // This allows extensions to provide their own Vite configurations
+    if (pluginConfig.autoload) {
+        availableConfigs = await getExtensionConfigs(
+            availableExtensions,
+            pluginConfig.autoloadIgnorePatterns,
+        );
+
+        // Merge and collect plugins from all extension configurations
+        pluginsFromExtensions = Object.values(availableConfigs)
+            .filter((config) => config?.plugins)
+            .flatMap((config) =>
+                Array.isArray(config.plugins)
+                    ? config.plugins
+                    : [config.plugins],
+            )
+            .filter(checkVitePlugins);
+    }
+
+    const plugin: PluginOption = {
         name: "vite-plugin-typo3-project",
-        config(config, env) {
-            // Don't watch files in irrelevant/temporary TYPO3 directories
-            // This prevents performance issues and avoids file system problems
-            config.server ??= {};
-            config.server.watch ??= {};
-            config.server.watch.ignored ??= getDefaultIgnoreList();
-
-            try {
-                pluginConfig = initializePluginConfig({
-                    userConfig,
-                    root: config.root ?? process.cwd(),
-                });
-            } catch (err: any) {
-                logger.error(colors.red(err.message), { timestamp: true });
-                return;
-            }
-
+        async config(config, env) {
             if (env.command === "serve" && env.mode === "production") {
                 logger.warn(
                     colors.yellow(
@@ -54,6 +76,18 @@ export default function typo3project(
                     { timestamp: true },
                 );
             }
+
+            // Include all Vite configurations from loaded TYPO3 extensions
+            for (const extensionConfig of Object.values(availableConfigs)) {
+                const { plugins: _, ...configWithoutPlugins } = extensionConfig;
+                config = mergeConfig(config, configWithoutPlugins);
+            }
+
+            // Don't watch files in irrelevant/temporary TYPO3 directories
+            // This prevents performance issues and avoids file system problems
+            config.server ??= {};
+            config.server.watch ??= {};
+            config.server.watch.ignored ??= getDefaultIgnoreList();
 
             // Set CORS headers to prevent leakage of source code to third-parties
             config.server ??= {};
@@ -83,15 +117,11 @@ export default function typo3project(
             // Setup build destination folder
             config.build ??= {};
             config.build.manifest ??= true;
+            config.build.copyPublicDir ??= false;
             config.build.outDir ??= join(
                 pluginConfig.composerContext.path,
                 pluginConfig.composerContext.webDir,
                 "_assets/vite/",
-            );
-
-            // Extract relevant TYPO3 extensions from composer metadata
-            availableExtensions = determineAvailableTypo3Extensions(
-                pluginConfig.composerContext,
             );
 
             // Add path alias for each extension
@@ -142,6 +172,7 @@ export default function typo3project(
             if (pluginConfig.debug) {
                 outputDebugInformation({
                     availableExtensions,
+                    availableConfigs,
                     entrypoints,
                     composerContext: pluginConfig.composerContext,
                     logger,
@@ -150,4 +181,6 @@ export default function typo3project(
             }
         },
     };
+
+    return [plugin, pluginsFromExtensions];
 }

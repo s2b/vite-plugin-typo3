@@ -2,6 +2,8 @@ export interface UserConfig {
     target?: PluginTarget;
     entrypointFile?: string;
     entrypointIgnorePatterns?: string[];
+    autoload?: boolean;
+    autoloadIgnorePatterns?: string[];
     debug?: boolean;
     aliases?: AliasConfig;
 }
@@ -11,6 +13,8 @@ export interface PluginConfig<T extends ComposerContext> extends UserConfig {
     entrypointFile: string;
     composerContext: T;
     entrypointIgnorePatterns: string[];
+    autoload: boolean;
+    autoloadIgnorePatterns: string[];
     debug: boolean;
     aliases: AliasConfig;
 }

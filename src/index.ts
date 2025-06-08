@@ -5,11 +5,13 @@ import typo3extension from "./typo3extension.js";
 import { PluginOption } from "vite";
 import { getDefaultIgnoreList, getDefaultAllowedOrigins } from "./utils.js";
 
-export default function typo3(userConfig: UserConfig = {}): PluginOption[] {
+export default async function typo3(
+    userConfig: UserConfig = {},
+): Promise<PluginOption[]> {
     if (userConfig.target === "extension") {
         return [typo3extension(userConfig)];
     } else {
-        return [typo3project(userConfig), autoOrigin()];
+        return [await typo3project(userConfig), autoOrigin()];
     }
 }
 
