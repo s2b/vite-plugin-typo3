@@ -1,5 +1,6 @@
 export interface UserConfig {
     target?: PluginTarget;
+    composerRoot?: string;
     entrypointFile?: string;
     entrypointIgnorePatterns?: string[];
     autoload?: boolean;
