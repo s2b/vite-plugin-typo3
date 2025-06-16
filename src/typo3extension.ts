@@ -25,10 +25,7 @@ export default function typo3extension(
     let entrypoints: string[];
 
     try {
-        pluginConfig = initializePluginConfig({
-            userConfig,
-            root: process.cwd(),
-        });
+        pluginConfig = initializePluginConfig(userConfig);
     } catch (err: any) {
         logger.error(colors.red(err.mesage), { timestamp: true });
         return;

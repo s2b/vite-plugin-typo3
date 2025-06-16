@@ -20,18 +20,14 @@ import type {
     AliasConfig,
 } from "./types.js";
 
-export function initializePluginConfig<T extends ComposerContext>({
-    userConfig,
-    root,
-}: {
-    userConfig?: UserConfig;
-    root: string;
-}): PluginConfig<T> {
+export function initializePluginConfig<T extends ComposerContext>(
+    userConfig?: UserConfig,
+): PluginConfig<T> {
     const target = userConfig?.target ?? "project";
 
     const composerContext = determineComposerContext<T>(
         target,
-        collectComposerChain(root),
+        collectComposerChain(userConfig?.composerRoot ?? process.cwd()),
     );
     if (!composerContext) {
         const message =

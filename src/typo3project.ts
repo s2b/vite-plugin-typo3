@@ -32,10 +32,7 @@ export default async function typo3project(
     let entrypoints: string[];
 
     try {
-        pluginConfig = initializePluginConfig({
-            userConfig,
-            root: process.cwd(),
-        });
+        pluginConfig = initializePluginConfig(userConfig);
     } catch (err: any) {
         logger.error(colors.red(err.message), { timestamp: true });
         return;

@@ -18,8 +18,8 @@ function mockLogger(): Logger {
 describe("outputDebugInformation", () => {
     test("one entrypoint from two extensions", () => {
         const logger = mockLogger();
-        outputDebugInformation(
-            [
+        outputDebugInformation({
+            availableExtensions: [
                 {
                     type: "typo3-cms-extension",
                     extensionKey: "test_extension1",
@@ -31,13 +31,13 @@ describe("outputDebugInformation", () => {
                     path: "/path/to/dummy/extension2",
                 },
             ],
-            ["/path/to/dummy/entrypoint.js"],
-            {
+            entrypoints: ["/path/to/dummy/entrypoint.js"],
+            composerContext: {
                 type: "project",
                 path: "/path/to/dummy",
             },
             logger,
-        );
+        });
 
         expect(logger.info).toHaveBeenCalledTimes(3);
         expect(logger.info).toHaveBeenNthCalledWith(
@@ -64,36 +64,36 @@ describe("outputDebugInformation", () => {
 
     test("no entrypoint from one extensions", () => {
         const logger = mockLogger();
-        outputDebugInformation(
-            [
+        outputDebugInformation({
+            availableExtensions: [
                 {
                     type: "typo3-cms-extension",
                     extensionKey: "test_extension1",
                     path: "/path/to/dummy/extension1",
                 },
             ],
-            [],
-            {
+            entrypoints: [],
+            composerContext: {
                 type: "project",
                 path: "/path/to/dummy",
             },
             logger,
-        );
+        });
 
         expect(logger.info).toHaveBeenCalledTimes(2);
     });
 
     test("no extensions", () => {
         const logger = mockLogger();
-        outputDebugInformation(
-            [],
-            [],
-            {
+        outputDebugInformation({
+            availableExtensions: [],
+            entrypoints: [],
+            composerContext: {
                 type: "project",
                 path: "/path/to/dummy",
             },
             logger,
-        );
+        });
 
         expect(logger.info).toHaveBeenCalledTimes(0);
     });

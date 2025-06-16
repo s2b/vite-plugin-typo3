@@ -10,7 +10,7 @@ test("vite build works for TYPO3 extension", async () => {
     const root = join(__dirname, "project/packages/test_extension");
     const output = await build({
         root,
-        plugins: [typo3({ target: "extension" })],
+        plugins: [typo3({ target: "extension", composerRoot: root })],
         build: {
             lib: {
                 cssFileName: "style",
