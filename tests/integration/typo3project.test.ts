@@ -11,7 +11,7 @@ test("vite build works for TYPO3 project", async () => {
     const root = join(__dirname, "project");
     const output = (await build({
         root,
-        plugins: [typo3()],
+        plugins: [typo3({ composerRoot: root })],
     })) as RollupOutput;
 
     const sortedOutput: (OutputAsset | OutputChunk)[] = output.output.sort(
