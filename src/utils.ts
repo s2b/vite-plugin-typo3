@@ -16,6 +16,7 @@ import type {
     UserConfig,
     Typo3ProjectContext,
     Typo3ExtensionContext,
+    AliasConfig,
 } from "./types.js";
 
 export function initializePluginConfig<T extends ComposerContext>(
@@ -42,6 +43,7 @@ export function initializePluginConfig<T extends ComposerContext>(
         entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
         debug: false,
         composerContext,
+        aliases: true,
         ...userConfig,
     };
 }
@@ -180,15 +182,14 @@ export function outputDebugInformation(
     entrypoints: string[],
     composerContext: ComposerContext,
     logger: Logger,
+    aliasConfig: AliasConfig = true,
 ): void {
     if (availableExtensions.length) {
         const extensionList = availableExtensions.map(
             (extension) => extension.extensionKey,
         );
-        const aliasList = extensionList.reduce(
-            (aliasList: string[], extensionKey) =>
-                aliasList.concat(["@" + extensionKey, "EXT:" + extensionKey]),
-            [],
+        const aliasList = createAliases(availableExtensions, aliasConfig).map(
+            (alias) => alias.find,
         );
         logger.info(
             `The following TYPO3 extensions have been recognized: ${colors.green(extensionList.join(", "))}`,
@@ -231,22 +232,8 @@ export function addRollupInputs(
 export function addAliases(
     alias: AliasOptions | undefined,
     extensions: Typo3ExtensionContext[],
+    config: AliasConfig = true,
 ): AliasOptions {
-    const additionalAliases = extensions.reduce(
-        (aliases: Alias[], extension) => {
-            const replacement = extension.path.endsWith("/")
-                ? extension.path
-                : extension.path + "/";
-            aliases.push({ find: "@" + extension.extensionKey, replacement });
-            aliases.push({
-                find: "EXT:" + extension.extensionKey,
-                replacement,
-            });
-            return aliases;
-        },
-        [],
-    );
-
     alias ??= [];
     if (!Array.isArray(alias)) {
         alias = Object.entries(alias).map((entry) => ({
@@ -254,8 +241,31 @@ export function addAliases(
             replacement: entry[1],
         }));
     }
+    return alias.concat(createAliases(extensions, config));
+}
 
-    return alias.concat(additionalAliases);
+export function createAliases(
+    extensions: Typo3ExtensionContext[],
+    config: AliasConfig,
+) {
+    if (config === false) {
+        return [];
+    }
+    return extensions.reduce((aliases: Alias[], extension) => {
+        const replacement = extension.path.endsWith("/")
+            ? extension.path
+            : extension.path + "/";
+        if (config === "@" || config === true) {
+            aliases.push({ find: "@" + extension.extensionKey, replacement });
+        }
+        if (config === "EXT" || config === true) {
+            aliases.push({
+                find: "EXT:" + extension.extensionKey,
+                replacement,
+            });
+        }
+        return aliases;
+    }, []);
 }
 
 export function readJsonFile(file: string): any {

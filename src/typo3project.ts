@@ -99,6 +99,7 @@ export default function typo3project(
             config.resolve.alias = addAliases(
                 config.resolve.alias,
                 availableExtensions,
+                pluginConfig.aliases,
             );
 
             // Find all vite entrypoints in relevant TYPO3 extensions
@@ -144,6 +145,7 @@ export default function typo3project(
                     entrypoints,
                     pluginConfig.composerContext,
                     logger,
+                    pluginConfig.aliases,
                 );
             }
         },

@@ -114,4 +114,59 @@ describe("addAliases", () => {
             },
         ]);
     });
+    test("set no aliases", () => {
+        expect(
+            addAliases(
+                undefined,
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
+                        path: "/path/to/dummy/extension1",
+                    },
+                ],
+                false,
+            ),
+        ).toEqual([]);
+    });
+    test("set only @ aliases", () => {
+        expect(
+            addAliases(
+                undefined,
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
+                        path: "/path/to/dummy/extension1",
+                    },
+                ],
+                "@",
+            ),
+        ).toEqual([
+            {
+                find: "@test_extension",
+                replacement: "/path/to/dummy/extension1/",
+            },
+        ]);
+    });
+    test("set only EXT aliases", () => {
+        expect(
+            addAliases(
+                undefined,
+                [
+                    {
+                        type: "typo3-cms-extension",
+                        extensionKey: "test_extension",
+                        path: "/path/to/dummy/extension1",
+                    },
+                ],
+                "EXT",
+            ),
+        ).toEqual([
+            {
+                find: "EXT:test_extension",
+                replacement: "/path/to/dummy/extension1/",
+            },
+        ]);
+    });
 });
