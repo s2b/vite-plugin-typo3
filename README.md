@@ -76,6 +76,10 @@ You can provide additional configuration to the plugin, for example:
     file to provide entrypoints from extensions.
 -   `entrypointIgnorePatterns` (array, default: `["**/node_modules/**", "**/.git/**"]`): Files
     that should be ignored when using wildcards in `ViteEntrypoints.json`.
+-   `aliases` (`true`, `false`, `@` or `EXT`): If set to true, both aliases starting with `EXT:`
+    and `@` are created for all available extension folders. If set to `@`, only `@` aliases
+    are created, if set to `EXT`, only `EXT:` aliases are created. If set to `false`, alias
+    creation is skipped altogether.
 
 ### Fixing CORS issues
 

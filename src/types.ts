@@ -3,6 +3,7 @@ export interface UserConfig {
     entrypointFile?: string;
     entrypointIgnorePatterns?: string[];
     debug?: boolean;
+    aliases?: AliasConfig;
 }
 
 export interface PluginConfig<T extends ComposerContext> extends UserConfig {
@@ -11,6 +12,7 @@ export interface PluginConfig<T extends ComposerContext> extends UserConfig {
     composerContext: T;
     entrypointIgnorePatterns: string[];
     debug: boolean;
+    aliases: AliasConfig;
 }
 
 export interface ComposerContext {
@@ -33,3 +35,5 @@ export interface Typo3ProjectContext extends ComposerContext {
 }
 
 export type PluginTarget = "project" | "extension";
+
+export type AliasConfig = true | "EXT" | "@" | false;

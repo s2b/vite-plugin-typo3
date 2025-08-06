@@ -65,9 +65,11 @@ export default function typo3extension(
 
             // Add path alias for extension
             config.resolve ??= {};
-            config.resolve.alias = addAliases(config.resolve.alias, [
-                extension,
-            ]);
+            config.resolve.alias = addAliases(
+                config.resolve.alias,
+                [extension],
+                pluginConfig.aliases,
+            );
 
             // Find all vite entrypoints in extension
             entrypoints = findEntrypointsInExtensions(
@@ -101,6 +103,7 @@ export default function typo3extension(
                     entrypoints,
                     pluginConfig.composerContext,
                     logger,
+                    pluginConfig.aliases,
                 );
             }
         },

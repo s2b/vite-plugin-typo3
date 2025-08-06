@@ -16,6 +16,7 @@ describe("initializePluginConfig", () => {
             entrypointFile: "Configuration/ViteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: false,
+            aliases: true,
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
@@ -35,6 +36,7 @@ describe("initializePluginConfig", () => {
             entrypointFile: "viteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: true,
+            aliases: true,
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
@@ -54,6 +56,7 @@ describe("initializePluginConfig", () => {
             entrypointFile: "Configuration/ViteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: false,
+            aliases: true,
             composerContext: {
                 type: "typo3-cms-extension",
                 path: "/path/to/fixtures/composerProject/packages/composerExtension/",
