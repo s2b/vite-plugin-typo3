@@ -1,13 +1,12 @@
-import { vi } from "vitest";
-import { vol, type DirectoryJSON } from "memfs";
+import { DirectoryJSON } from "memfs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { vi } from "vitest";
 
 const fs = await vi.importActual<typeof import("node:fs")>("node:fs");
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-
-const fixturePath = resolve(__dirname, "../tests/unit/fixtures");
+const fixturePath = resolve(__dirname, "fixtures");
 const fixtureMount = "/path/to/fixtures";
 
 function createFixtureDirectoryStructure(
@@ -35,8 +34,4 @@ function createFixtureDirectoryStructure(
     return files;
 }
 
-const fixtureFiles = createFixtureDirectoryStructure(fixturePath, fixtureMount);
-
-vol.fromJSON(fixtureFiles);
-
-export default vol;
+export default createFixtureDirectoryStructure(fixturePath, fixtureMount);

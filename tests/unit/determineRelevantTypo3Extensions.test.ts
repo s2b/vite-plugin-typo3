@@ -1,7 +1,14 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { determineAvailableTypo3Extensions } from "../../src/utils";
+import { vol } from "memfs";
+import fixtureDirectoryStructure from "./fixtureDirectoryStructure";
 
 vi.mock("node:fs");
+vi.mock("node:fs/promises");
+
+beforeEach(() => {
+    vol.fromJSON(fixtureDirectoryStructure);
+});
 
 describe("determineAvailableTypo3Extensions", () => {
     test("determineAvailableTypo3Extensions", () => {

@@ -1,7 +1,14 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { collectComposerChain } from "../../src/utils";
+import { vol } from "memfs";
+import fixtureDirectoryStructure from "./fixtureDirectoryStructure";
 
 vi.mock("node:fs");
+vi.mock("node:fs/promises");
+
+beforeEach(() => {
+    vol.fromJSON(fixtureDirectoryStructure);
+});
 
 describe("collectComposerChain", () => {
     test("determines composer chain from extension path", () => {

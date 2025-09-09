@@ -49,12 +49,12 @@
     "vite": "^6.0 || ^7.0"
   },
   "devDependencies": {
-    "@types/node": "^20.17.57",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@types/node": "^24.3.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "memfs": "^4.9.2",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "vite": "^6.3.5",
-    "vitest": "^1.6.0"
+    "vitest": "^3.2.4"
   }
 }

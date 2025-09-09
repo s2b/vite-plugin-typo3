@@ -1,8 +1,15 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { initializePluginConfig } from "../../src/utils";
 import { Typo3ExtensionContext, Typo3ProjectContext } from "../../src/types";
+import { vol } from "memfs";
+import fixtureDirectoryStructure from "./fixtureDirectoryStructure";
 
 vi.mock("node:fs");
+vi.mock("node:fs/promises");
+
+beforeEach(() => {
+    vol.fromJSON(fixtureDirectoryStructure);
+});
 
 describe("initializePluginConfig", () => {
     test("empty user settings", () => {

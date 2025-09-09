@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 
 // Tests use the actual filesystem because of an issue in fast-glob
 // vi.mock("node:fs");
+// vi.mock("node:fs/promises");
+
+// beforeEach(() => {
+//     vol.fromJSON(fixtureDirectoryStructure);
+// });
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
