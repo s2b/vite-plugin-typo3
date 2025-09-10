@@ -3,15 +3,28 @@ import { build } from "vite";
 import typo3 from "../../src";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { UserConfig } from "../../src/types";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-test("vite build works for TYPO3 extension", async () => {
-    const root = join(__dirname, "project/packages/test_extension");
+interface TestCase {
+    projectName: string;
+    pluginConfig: UserConfig;
+}
+
+test.for<TestCase>([
+    { projectName: "project", pluginConfig: {} },
+    { projectName: "uninitializedProject", pluginConfig: {} },
+])("vite build works for TYPO3 extension in $projectName", async (testCase) => {
+    const root = join(
+        __dirname,
+        `${testCase.projectName}/packages/test_extension`,
+    );
     const output = await build({
         root,
-        plugins: [typo3({ target: "extension" })],
+        plugins: [typo3({ target: "extension", ...testCase.pluginConfig })],
         build: {
+            // @ts-expect-error "entry" is specified by plugin, so no need to specify it here
             lib: {
                 cssFileName: "style",
             },

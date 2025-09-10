@@ -138,7 +138,7 @@ export function findEntrypointsInExtensions(
     return entrypoints;
 }
 
-export function determineAvailableTypo3Extensions(
+export function determineAvailableTypo3ExtensionsFromComposer(
     composerContext: Typo3ProjectContext,
 ): Typo3ExtensionContext[] {
     const composerInstalled = join(
@@ -175,6 +175,30 @@ export function determineAvailableTypo3Extensions(
             );
 
     return installedExtensions;
+}
+
+export function determineAvailableTypo3ExtensionsFromPaths(
+    rootPath: string,
+    composerPackagePaths: string[],
+): Typo3ExtensionContext[] {
+    return composerPackagePaths
+        .map((path: string) => resolve(rootPath, path))
+        .map((absolutePath: string) => {
+            const composerFile = absolutePath + "/composer.json";
+            if (!fs.existsSync(composerFile)) {
+                throw new Error(
+                    `Invalid composer package in "${absolutePath}", composer.json not found.`,
+                );
+            }
+            return createComposerContext(
+                readJsonFile(composerFile),
+                absolutePath,
+            );
+        })
+        .filter(
+            (context: ComposerContext) =>
+                context.type === "typo3-cms-extension",
+        ) as Typo3ExtensionContext[];
 }
 
 export function outputDebugInformation(

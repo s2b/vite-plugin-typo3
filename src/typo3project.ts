@@ -10,7 +10,8 @@ import type {
 import {
     addAliases,
     addRollupInputs,
-    determineAvailableTypo3Extensions,
+    determineAvailableTypo3ExtensionsFromComposer,
+    determineAvailableTypo3ExtensionsFromPaths,
     findEntrypointsInExtensions,
     getDefaultAllowedOrigins,
     getDefaultIgnoreList,
@@ -90,9 +91,18 @@ export default function typo3project(
             );
 
             // Extract relevant TYPO3 extensions from composer metadata
-            availableExtensions = determineAvailableTypo3Extensions(
-                pluginConfig.composerContext,
-            );
+            if (pluginConfig.composerPackagePaths) {
+                availableExtensions =
+                    determineAvailableTypo3ExtensionsFromPaths(
+                        config.root ?? process.cwd(),
+                        pluginConfig.composerPackagePaths,
+                    );
+            } else {
+                availableExtensions =
+                    determineAvailableTypo3ExtensionsFromComposer(
+                        pluginConfig.composerContext,
+                    );
+            }
 
             // Add path alias for each extension
             config.resolve ??= {};
