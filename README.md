@@ -80,6 +80,11 @@ You can provide additional configuration to the plugin, for example:
     and `@` are created for all available extension folders. If set to `@`, only `@` aliases
     are created, if set to `EXT`, only `EXT:` aliases are created. If set to `false`, alias
     creation is skipped altogether.
+-   `composerPackagePaths` (array of paths, default `null`): If specified, the automatic
+    discovery of composer packages via `vendor/composer/installed.json` will be skipped. Instead,
+    the specified paths will be scanned for `composer.json` files to be used instead. This can
+    be helpful in CI scenarios where PHP dependencies aren't available in the frontend build
+    step.
 
 ### Fixing CORS issues
 
