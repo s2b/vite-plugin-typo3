@@ -14,14 +14,16 @@ beforeEach(() => {
 describe("initializePluginConfig", () => {
     test("empty user settings", () => {
         expect(
-            initializePluginConfig<Typo3ProjectContext>(
-                {},
-                "/path/to/fixtures/composerProject",
-            ),
+            initializePluginConfig<Typo3ProjectContext>({
+                composerRoot: "/path/to/fixtures/composerProject",
+            }),
         ).toEqual({
             target: "project",
             entrypointFile: "Configuration/ViteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            autoload: false,
+            autoloadIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            composerRoot: "/path/to/fixtures/composerProject",
             debug: false,
             aliases: true,
             composerContext: {
@@ -34,14 +36,18 @@ describe("initializePluginConfig", () => {
     });
     test("defined user settings", () => {
         expect(
-            initializePluginConfig<Typo3ProjectContext>(
-                { debug: true, entrypointFile: "viteEntrypoints.json" },
-                "/path/to/fixtures/composerProject",
-            ),
+            initializePluginConfig<Typo3ProjectContext>({
+                debug: true,
+                entrypointFile: "viteEntrypoints.json",
+                composerRoot: "/path/to/fixtures/composerProject",
+            }),
         ).toEqual({
             target: "project",
             entrypointFile: "viteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            autoload: false,
+            autoloadIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            composerRoot: "/path/to/fixtures/composerProject",
             debug: true,
             aliases: true,
             composerContext: {
@@ -54,14 +60,19 @@ describe("initializePluginConfig", () => {
     });
     test("extension target", () => {
         expect(
-            initializePluginConfig<Typo3ExtensionContext>(
-                { target: "extension" },
-                "/path/to/fixtures/composerProject/packages/composerExtension/",
-            ),
+            initializePluginConfig<Typo3ExtensionContext>({
+                target: "extension",
+                composerRoot:
+                    "/path/to/fixtures/composerProject/packages/composerExtension/",
+            }),
         ).toEqual({
             target: "extension",
             entrypointFile: "Configuration/ViteEntrypoints.json",
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            autoload: false,
+            autoloadIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+            composerRoot:
+                "/path/to/fixtures/composerProject/packages/composerExtension/",
             debug: false,
             aliases: true,
             composerContext: {
@@ -73,18 +84,17 @@ describe("initializePluginConfig", () => {
     });
     test("error if no composer project", () => {
         expect(() => {
-            initializePluginConfig<Typo3ProjectContext>(
-                {},
-                "/path/to/fixtures/nonComposerProject",
-            );
+            initializePluginConfig<Typo3ProjectContext>({
+                composerRoot: "/path/to/fixtures/nonComposerProject",
+            });
         }).toThrow();
     });
     test("error if target doesn't match composer project", () => {
         expect(() => {
-            initializePluginConfig<Typo3ExtensionContext>(
-                { target: "extension" },
-                "/path/to/fixtures/composerProject",
-            );
+            initializePluginConfig<Typo3ExtensionContext>({
+                target: "extension",
+                composerRoot: "/path/to/fixtures/composerProject",
+            });
         }).toThrow();
     });
 });

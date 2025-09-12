@@ -5,6 +5,7 @@ import {
     type Alias,
     type AliasOptions,
     type Logger,
+    PluginOption,
     defaultAllowedOrigins,
 } from "vite";
 import { globSync } from "tinyglobby";
@@ -20,14 +21,13 @@ import type {
 } from "./types.js";
 
 export function initializePluginConfig<T extends ComposerContext>(
-    userConfig: UserConfig,
-    root: string,
+    userConfig?: UserConfig,
 ): PluginConfig<T> {
-    const target = userConfig.target ?? "project";
+    const target = userConfig?.target ?? "project";
 
     const composerContext = determineComposerContext<T>(
         target,
-        collectComposerChain(root),
+        collectComposerChain(userConfig?.composerRoot ?? process.cwd()),
     );
     if (!composerContext) {
         const message =
@@ -41,10 +41,12 @@ export function initializePluginConfig<T extends ComposerContext>(
         target,
         entrypointFile: "Configuration/ViteEntrypoints.json",
         entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
+        autoload: false,
+        autoloadIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
         debug: false,
         composerContext,
         aliases: true,
-        ...userConfig,
+        ...(userConfig ?? {}),
     };
 }
 
@@ -177,18 +179,26 @@ export function determineAvailableTypo3Extensions(
     return installedExtensions;
 }
 
-export function outputDebugInformation(
-    availableExtensions: Typo3ExtensionContext[],
-    entrypoints: string[],
-    composerContext: ComposerContext,
-    logger: Logger,
-    aliasConfig: AliasConfig = true,
-): void {
+export function outputDebugInformation({
+    availableExtensions,
+    availableConfigs,
+    entrypoints,
+    composerContext,
+    logger,
+    aliasConfig,
+}: {
+    availableExtensions: Typo3ExtensionContext[];
+    availableConfigs?: Record<string, any>;
+    entrypoints: string[];
+    composerContext: ComposerContext;
+    logger: Logger;
+    aliasConfig: AliasConfig,
+}): void {
     if (availableExtensions.length) {
         const extensionList = availableExtensions.map(
             (extension) => extension.extensionKey,
         );
-        const aliasList = createAliases(availableExtensions, aliasConfig).map(
+        const aliasList = createAliases(availableExtensions, aliasConfig ?? true).map(
             (alias) => alias.find,
         );
         logger.info(
@@ -197,6 +207,16 @@ export function outputDebugInformation(
         );
         logger.info(
             `The following aliases have been defined: ${colors.green(aliasList.join(", "))}`,
+            { timestamp: true },
+        );
+    }
+
+    if (availableConfigs && Object.keys(availableConfigs).length) {
+        const configList = Object.keys(availableConfigs);
+        logger.info(
+            `The following TYPO3 extension Vite configurations have been loaded: ${colors.green(
+                configList.join(", "),
+            )}`,
             { timestamp: true },
         );
     }
@@ -291,4 +311,69 @@ export function getDefaultIgnoreList(): string[] {
 
 export function getDefaultAllowedOrigins(): RegExp[] {
     return [defaultAllowedOrigins, /^https?:\/\/.*\.ddev\.site(:\d+)?$/];
+}
+
+export async function getExtensionConfigs(
+    extensions: Typo3ExtensionContext[],
+    autoloadIgnorePatterns: string[],
+): Promise<Record<string, any>> {
+    const availableConfigs: Record<string, any> = {};
+    const importPromises: Promise<void>[] = [];
+
+    for (const extension of extensions) {
+        const configFiles = globSync(
+            [
+                join(extension.path, "vite.config.mjs"),
+                join(extension.path, "**/vite.config.mjs"),
+            ],
+            {
+                ignore: autoloadIgnorePatterns,
+                absolute: true,
+            },
+        );
+
+        for (const configFile of configFiles) {
+            const importPromise = (async () => {
+                try {
+                    const { viteConfig } = await import(configFile);
+                    if (viteConfig && typeof viteConfig === "object") {
+                        availableConfigs[extension.extensionKey] = viteConfig;
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error loading Vite config from ${configFile}:`,
+                        error,
+                    );
+                }
+            })();
+
+            importPromises.push(importPromise);
+        }
+    }
+
+    await Promise.all(importPromises);
+
+    return availableConfigs;
+}
+
+/** @todo Implement a check or warning for duplicate Vite plugins. */
+export function checkVitePlugins(pluginConfig: PluginOption) {
+    if (!pluginConfig) return true;
+
+    // If pluginConfig is an array, check any of the plugins recursively
+    if (Array.isArray(pluginConfig)) {
+        return pluginConfig.some(checkVitePlugins);
+    }
+
+    // If pluginConfig is not an object or does not have a name property, filter it out
+    if (
+        typeof pluginConfig !== "object" ||
+        !("name" in pluginConfig) ||
+        typeof pluginConfig.name !== "string"
+    ) {
+        return true;
+    }
+
+    // Filter out our own plugin if it is present
+    return pluginConfig.name !== "vite-plugin-typo3-extension";
 }
