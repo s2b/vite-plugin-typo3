@@ -2,6 +2,7 @@ export interface UserConfig {
     target?: PluginTarget;
     entrypointFile?: string;
     entrypointIgnorePatterns?: string[];
+    composerPackagePaths?: string[];
     debug?: boolean;
     aliases?: AliasConfig;
 }
@@ -10,6 +11,7 @@ export interface PluginConfig<T extends ComposerContext> extends UserConfig {
     target: PluginTarget;
     entrypointFile: string;
     composerContext: T;
+    composerPackagePaths?: string[];
     entrypointIgnorePatterns: string[];
     debug: boolean;
     aliases: AliasConfig;

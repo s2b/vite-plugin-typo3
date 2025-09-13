@@ -6,3 +6,5 @@ tests/distribution/vite-plugin-typo3*.tgz
 tests/distribution/**/public
 tests/integration/project/public
 tests/integration/project/packages/test_extension/Resources/Public
+tests/integration/uninitializedProject/public
+tests/integration/uninitializedProject/packages/test_extension/Resources/Public

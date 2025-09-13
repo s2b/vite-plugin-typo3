@@ -4,14 +4,31 @@ import typo3 from "../../src";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RollupOutput, OutputChunk, OutputAsset } from "rollup";
+import { UserConfig } from "../../src/types";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-test("vite build works for TYPO3 project", async () => {
-    const root = join(__dirname, "project");
+interface TestCase {
+    projectName: string;
+    pluginConfig: UserConfig;
+}
+
+test.for<TestCase>([
+    { projectName: "project", pluginConfig: {} },
+    {
+        projectName: "uninitializedProject",
+        pluginConfig: {
+            composerPackagePaths: [
+                "packages/test_extension/",
+                "vendor/test-vendor/vendor-extension/",
+            ],
+        },
+    },
+])("vite build works for TYPO3 project $projectName", async (testCase) => {
+    const root = join(__dirname, testCase.projectName);
     const output = (await build({
         root,
-        plugins: [typo3()],
+        plugins: [typo3(testCase.pluginConfig)],
     })) as RollupOutput;
 
     const sortedOutput: (OutputAsset | OutputChunk)[] = output.output.sort(
@@ -23,7 +40,7 @@ test("vite build works for TYPO3 project", async () => {
     expect((sortedOutput[0] as OutputAsset).fileName).toBe(
         ".vite/manifest.json",
     );
-    expect((sortedOutput[0] as OutputAsset).source).toMatchFileSnapshot(
+    await expect((sortedOutput[0] as OutputAsset).source).toMatchFileSnapshot(
         "manifest-expected.json",
     );
 
