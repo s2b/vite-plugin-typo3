@@ -3,7 +3,7 @@ import { build } from "vite";
 import typo3 from "../../src";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { RollupOutput, OutputChunk, OutputAsset } from "rollup";
+import { RolldownOutput, OutputChunk, OutputAsset } from "rolldown";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -12,7 +12,7 @@ test("vite build works for TYPO3 project", async () => {
     const output = (await build({
         root,
         plugins: [typo3()],
-    })) as RollupOutput;
+    })) as RolldownOutput;
 
     const sortedOutput: (OutputAsset | OutputChunk)[] = output.output.sort(
         (a, b) => (a.fileName < b.fileName ? -1 : 1),
@@ -23,17 +23,16 @@ test("vite build works for TYPO3 project", async () => {
     expect((sortedOutput[0] as OutputAsset).fileName).toBe(
         ".vite/manifest.json",
     );
-    expect((sortedOutput[0] as OutputAsset).source).toMatchFileSnapshot(
+    await expect((sortedOutput[0] as OutputAsset).source).toMatchFileSnapshot(
         "manifest-expected.json",
     );
 
     expect((sortedOutput[1] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Alt.entry-D9NJkUbZ.js"`,
+        `"assets/Alt.entry-BoPKGVcr.js"`,
     );
-    expect((sortedOutput[1] as OutputChunk).code).toMatchInlineSnapshot(`
-      "console.log("Alt.entry.ts");
-      "
-    `);
+    expect((sortedOutput[1] as OutputChunk).code).toMatchInlineSnapshot(
+        `"console.log(\`Alt.entry.ts\`);"`,
+    );
 
     expect((sortedOutput[2] as OutputAsset).fileName).toMatchInlineSnapshot(
         `"assets/Main-VWk4xp3e.css"`,
@@ -44,12 +43,11 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[3] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Main.entry-BSYxZrtl.js"`,
+        `"assets/Main.entry-49EpidS1.js"`,
     );
-    expect((sortedOutput[3] as OutputChunk).code).toMatchInlineSnapshot(`
-      "console.log("Main.ts");
-      "
-    `);
+    expect((sortedOutput[3] as OutputChunk).code).toMatchInlineSnapshot(
+        `"console.log(\`Main.ts\`);"`,
+    );
 
     expect((sortedOutput[4] as OutputAsset).fileName).toMatchInlineSnapshot(
         `"assets/Vendor-DE25tVp9.css"`,
@@ -60,10 +58,9 @@ test("vite build works for TYPO3 project", async () => {
     `);
 
     expect((sortedOutput[5] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Vendor.entry-BTvEMMs0.js"`,
+        `"assets/Vendor.entry-Bk2RJPqq.js"`,
     );
-    expect((sortedOutput[5] as OutputChunk).code).toMatchInlineSnapshot(`
-      "console.log("Vendor.ts");
-      "
-    `);
+    expect((sortedOutput[5] as OutputChunk).code).toMatchInlineSnapshot(
+        `"console.log(\`Vendor.ts\`);"`,
+    );
 });

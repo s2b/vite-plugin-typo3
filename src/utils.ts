@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import type { InputOption } from "rollup";
 import {
     type Alias,
     type AliasOptions,
@@ -18,6 +17,9 @@ import type {
     Typo3ExtensionContext,
     AliasConfig,
 } from "./types.js";
+
+// Copied from rollup/rolldown to stay compatible with both
+type InputOption = string | string[] | Record<string, string>;
 
 export function initializePluginConfig<T extends ComposerContext>(
     userConfig: UserConfig,
