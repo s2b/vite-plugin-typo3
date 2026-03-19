@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-typo3",
-  "version": "2-dev",
+  "version": "3-dev",
   "description": "Vite plugin to collect assets from TYPO3 extensions",
   "author": "Simon Praetorius",
   "license": "MIT",
@@ -9,18 +9,11 @@
   ],
   "homepage": "https://github.com/s2b/vite-plugin-typo3",
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/cjs/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [
@@ -28,15 +21,14 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "build": "tsc -b",
     "prepack": "npm run build",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:distribution": "npm run test:distribution:pack && npm run test:distribution:cjs && npm run test:distribution:esm && npm run test:distribution:ts",
+    "test:distribution": "npm run test:distribution:pack && npm run test:distribution:esm && npm run test:distribution:ts",
     "test:distribution:pack": "npm pack --pack-destination tests/distribution/ && cd tests/distribution/ && tar xzf vite-plugin-typo3*.tgz",
-    "test:distribution:cjs": "cd tests/distribution/javascript-cjs/ && npm install --package-lock=false && npm run build",
     "test:distribution:esm": "cd tests/distribution/javascript-esm/ && npm install --package-lock=false && npm run build",
     "test:distribution:ts": "cd tests/distribution/typescript/ && npm install --package-lock=false && npm run build && npm run typecheck"
   },

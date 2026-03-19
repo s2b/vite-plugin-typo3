@@ -9,12 +9,12 @@
         "strict": true,
         "noUncheckedIndexedAccess": true,
 
-        "moduleResolution": "node",
+        "module": "nodenext",
         "outDir": "dist",
         "sourceMap": true,
 
         "lib": ["es2022"],
-        "types": ["vite"],
+        "types": ["vite/client"],
 
         "declaration": true
     },
