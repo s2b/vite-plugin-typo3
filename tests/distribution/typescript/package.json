@@ -3,7 +3,7 @@
   "type": "module",
   "devDependencies": {
     "typescript": "^5.4.5",
-    "vite": "^6.3.5",
+    "vite": "^8.0.1",
     "vite-plugin-typo3": "file:../package/"
   },
   "scripts": {

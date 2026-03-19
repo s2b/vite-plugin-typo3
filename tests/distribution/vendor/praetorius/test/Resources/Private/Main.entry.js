@@ -1,1 +1,1 @@
-export default "Test";
+console.log("Main.entry.js");

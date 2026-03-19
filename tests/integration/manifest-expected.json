@@ -1,12 +1,12 @@
 {
   "packages/test_extension/Resources/Private/Alt.entry.ts": {
-    "file": "assets/Alt.entry-D9NJkUbZ.js",
+    "file": "assets/Alt.entry-BoPKGVcr.js",
     "name": "Alt.entry",
     "src": "packages/test_extension/Resources/Private/Alt.entry.ts",
     "isEntry": true
   },
   "packages/test_extension/Resources/Private/Main.entry.ts": {
-    "file": "assets/Main.entry-BSYxZrtl.js",
+    "file": "assets/Main.entry-49EpidS1.js",
     "name": "Main.entry",
     "src": "packages/test_extension/Resources/Private/Main.entry.ts",
     "isEntry": true,
@@ -15,7 +15,7 @@
     ]
   },
   "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts": {
-    "file": "assets/Vendor.entry-BTvEMMs0.js",
+    "file": "assets/Vendor.entry-Bk2RJPqq.js",
     "name": "Vendor.entry",
     "src": "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts",
     "isEntry": true,
