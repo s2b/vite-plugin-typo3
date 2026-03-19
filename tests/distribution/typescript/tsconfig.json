@@ -10,11 +10,10 @@
         "noUncheckedIndexedAccess": true,
         "preserveSymlinks": true,
 
-        "moduleResolution": "nodenext",
         "module": "nodenext",
 
         "lib": ["es2022"],
-        "types": ["vite"]
+        "types": ["vite/client"]
     },
     "include": ["vite.config.ts"]
 }
