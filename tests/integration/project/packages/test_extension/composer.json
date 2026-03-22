@@ -1,4 +1,5 @@
 {
+    "name": "praetorius/test-extension",
     "type": "typo3-cms-extension",
     "extra": {
         "typo3/cms": {
