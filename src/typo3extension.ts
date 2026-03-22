@@ -65,6 +65,7 @@ export default function typo3extension(
 
             // Add path alias for extension
             config.resolve ??= {};
+            config.resolve.preserveSymlinks ??= true;
             config.resolve.alias = addAliases(
                 config.resolve.alias,
                 [extension],

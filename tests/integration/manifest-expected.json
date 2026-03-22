@@ -1,14 +1,14 @@
 {
-  "packages/test_extension/Resources/Private/Alt.entry.ts": {
+  "vendor/praetorius/test-extension/Resources/Private/Alt.entry.ts": {
     "file": "assets/Alt.entry-BoPKGVcr.js",
     "name": "Alt.entry",
-    "src": "packages/test_extension/Resources/Private/Alt.entry.ts",
+    "src": "vendor/praetorius/test-extension/Resources/Private/Alt.entry.ts",
     "isEntry": true
   },
-  "packages/test_extension/Resources/Private/Main.entry.ts": {
+  "vendor/praetorius/test-extension/Resources/Private/Main.entry.ts": {
     "file": "assets/Main.entry-49EpidS1.js",
     "name": "Main.entry",
-    "src": "packages/test_extension/Resources/Private/Main.entry.ts",
+    "src": "vendor/praetorius/test-extension/Resources/Private/Main.entry.ts",
     "isEntry": true,
     "css": [
       "assets/Main-VWk4xp3e.css"
