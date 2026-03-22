@@ -9,17 +9,17 @@ describe("addAliases", () => {
                 {
                     type: "typo3-cms-extension",
                     extensionKey: "test_extension",
-                    path: "/path/to/dummy/extension1",
+                    path: "/path/to/dummy/extension1/",
                 },
             ]),
         ).toEqual([
             {
                 find: "@test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
             {
                 find: "EXT:test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
@@ -41,11 +41,11 @@ describe("addAliases", () => {
             { find: "@existing_find", replacement: "/path/to/replace/with/" },
             {
                 find: "@test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
             {
                 find: "EXT:test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
@@ -78,7 +78,7 @@ describe("addAliases", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: "/path/to/dummy/extension1",
+                        path: "/path/to/dummy/extension1/",
                     },
                 ],
             ),
@@ -86,11 +86,11 @@ describe("addAliases", () => {
             { find: "@existing_find", replacement: "/path/to/replace/with/" },
             {
                 find: "@test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
             {
                 find: "EXT:test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
@@ -100,17 +100,17 @@ describe("addAliases", () => {
                 {
                     type: "typo3-cms-extension",
                     extensionKey: "test_extension",
-                    path: "/path/to/dummy/extension1/",
+                    path: "/path/to/dummy/extension1//",
                 },
             ]),
         ).toEqual([
             {
                 find: "@test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
             {
                 find: "EXT:test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
@@ -122,7 +122,7 @@ describe("addAliases", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: "/path/to/dummy/extension1",
+                        path: "/path/to/dummy/extension1/",
                     },
                 ],
                 false,
@@ -137,7 +137,7 @@ describe("addAliases", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: "/path/to/dummy/extension1",
+                        path: "/path/to/dummy/extension1/",
                     },
                 ],
                 "@",
@@ -145,7 +145,7 @@ describe("addAliases", () => {
         ).toEqual([
             {
                 find: "@test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
@@ -157,7 +157,7 @@ describe("addAliases", () => {
                     {
                         type: "typo3-cms-extension",
                         extensionKey: "test_extension",
-                        path: "/path/to/dummy/extension1",
+                        path: "/path/to/dummy/extension1/",
                     },
                 ],
                 "EXT",
@@ -165,7 +165,7 @@ describe("addAliases", () => {
         ).toEqual([
             {
                 find: "EXT:test_extension",
-                replacement: "/path/to/dummy/extension1/",
+                replacement: "/path/to/dummy/extension1",
             },
         ]);
     });
