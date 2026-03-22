@@ -96,6 +96,7 @@ export default function typo3project(
 
             // Add path alias for each extension
             config.resolve ??= {};
+            config.resolve.preserveSymlinks ??= true;
             config.resolve.alias = addAliases(
                 config.resolve.alias,
                 availableExtensions,
