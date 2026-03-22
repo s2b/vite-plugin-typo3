@@ -254,9 +254,7 @@ export function createAliases(
         return [];
     }
     return extensions.reduce((aliases: Alias[], extension) => {
-        const replacement = extension.path.endsWith("/")
-            ? extension.path
-            : extension.path + "/";
+        const replacement = extension.path.replace(/\/+$/g, "");
         if (config === "@" || config === true) {
             aliases.push({ find: "@" + extension.extensionKey, replacement });
         }
