@@ -8,6 +8,10 @@
     "vite-plugin"
   ],
   "homepage": "https://github.com/s2b/vite-plugin-typo3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s2b/vite-plugin-typo3.git"
+  },
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {

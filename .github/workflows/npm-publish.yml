@@ -4,6 +4,10 @@ on:
   release:
     types: [created]
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
 jobs:
   test:
     uses: ./.github/workflows/test.yml
@@ -21,5 +25,3 @@ jobs:
       - run: npm ci
       - run: npm version ${{github.event.release.tag_name}} --no-git-tag-version --allow-same-version
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
