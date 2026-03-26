@@ -3,15 +3,32 @@ import { build } from "vite";
 import typo3 from "../../src";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { RolldownOutput, OutputChunk, OutputAsset } from "rolldown";
+import type { RolldownOutput, OutputChunk, OutputAsset } from "rolldown";
+import { UserConfig } from "../../src/types";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-test("vite build works for TYPO3 project", async () => {
-    const root = join(__dirname, "project");
+interface TestCase {
+    projectName: string;
+    pluginConfig: UserConfig;
+}
+
+test.for<TestCase>([
+    { projectName: "project", pluginConfig: {} },
+    {
+        projectName: "uninitializedProject",
+        pluginConfig: {
+            composerPackagePaths: [
+                "packages/test_extension/",
+                "vendor/test-vendor/vendor-extension/",
+            ],
+        },
+    },
+])("vite build works for TYPO3 project $projectName", async (testCase) => {
+    const root = join(__dirname, testCase.projectName);
     const output = (await build({
         root,
-        plugins: [typo3()],
+        plugins: [typo3(testCase.pluginConfig)],
     })) as RolldownOutput;
 
     const sortedOutput: (OutputAsset | OutputChunk)[] = output.output.sort(

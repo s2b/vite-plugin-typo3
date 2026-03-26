@@ -1,0 +1,8 @@
+{
+    "type": "typo3-cms-extension",
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "vendor_extension"
+        }
+    }
+}
