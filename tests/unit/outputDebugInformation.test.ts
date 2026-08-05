@@ -50,7 +50,7 @@ describe("outputDebugInformation", () => {
             2,
             "The following aliases have been defined: " +
                 colors.green(
-                    "@test_extension1, EXT:test_extension1, @test_extension2, EXT:test_extension2",
+                    "@test_extension1, EXT:test_extension1, ext:test_extension1, @test_extension2, EXT:test_extension2, ext:test_extension2",
                 ),
             { timestamp: true },
         );
