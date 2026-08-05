@@ -263,6 +263,10 @@ export function createAliases(
                 find: "EXT:" + extension.extensionKey,
                 replacement,
             });
+            aliases.push({
+                find: "ext:" + extension.extensionKey,
+                replacement,
+            });
         }
         return aliases;
     }, []);
