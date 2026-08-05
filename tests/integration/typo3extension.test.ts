@@ -12,9 +12,7 @@ test("vite build works for TYPO3 extension", async () => {
         root,
         plugins: [typo3({ target: "extension" })],
         build: {
-            lib: {
-                cssFileName: "style",
-            },
+            cssCodeSplit: true,
         },
     });
 
@@ -22,7 +20,7 @@ test("vite build works for TYPO3 extension", async () => {
 
     const esmOutput = output[0];
 
-    expect(esmOutput.output).toHaveLength(3);
+    expect(esmOutput.output).toHaveLength(5);
     expect(esmOutput.output[0].fileName).toMatchInlineSnapshot(
         `"Alt.entry.js"`,
     );
@@ -31,11 +29,19 @@ test("vite build works for TYPO3 extension", async () => {
         `"Main.entry.js"`,
     );
     expect(esmOutput.output[1].code).toContain("Main.ts");
-    expect(esmOutput.output[2].fileName).toMatchInlineSnapshot(`"style.css"`);
-    expect(esmOutput.output[2].source).toContain("body{background:red}");
+    expect(esmOutput.output[2].fileName).toMatchInlineSnapshot(
+        `"Scss.entry.js"`,
+    );
+    expect(esmOutput.output[2].code).not.toContain("scss-main");
+    expect(esmOutput.output[3].fileName).toMatchInlineSnapshot(`"Main.css"`);
+    expect(esmOutput.output[3].source).toContain("body{background:red}");
+    expect(esmOutput.output[4].fileName).toMatchInlineSnapshot(`"Scss.css"`);
+    expect(esmOutput.output[4].source).toContain(
+        ".partial{color:#00f}.scss-main{background:green}",
+    );
 
     const cjsOutput = output[1];
-    expect(cjsOutput.output).toHaveLength(3);
+    expect(cjsOutput.output).toHaveLength(5);
     expect(cjsOutput.output[0].fileName).toMatchInlineSnapshot(
         `"Alt.entry.cjs"`,
     );
@@ -44,6 +50,14 @@ test("vite build works for TYPO3 extension", async () => {
         `"Main.entry.cjs"`,
     );
     expect(cjsOutput.output[1].code).toContain("Main.ts");
-    expect(cjsOutput.output[2].fileName).toMatchInlineSnapshot(`"style.css"`);
-    expect(cjsOutput.output[2].source).toContain("body{background:red}");
+    expect(cjsOutput.output[2].fileName).toMatchInlineSnapshot(
+        `"Scss.entry.cjs"`,
+    );
+    expect(cjsOutput.output[2].code).not.toContain("scss-main");
+    expect(cjsOutput.output[3].fileName).toMatchInlineSnapshot(`"Main.css"`);
+    expect(cjsOutput.output[3].source).toContain("body{background:red}");
+    expect(cjsOutput.output[4].fileName).toMatchInlineSnapshot(`"Scss.css"`);
+    expect(cjsOutput.output[4].source).toContain(
+        ".partial{color:#00f}.scss-main{background:green}",
+    );
 });

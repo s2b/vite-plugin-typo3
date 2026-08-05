@@ -14,6 +14,15 @@
       "assets/Main-[hash].css"
     ]
   },
+  "vendor/praetorius/test-extension/Resources/Private/Scss.entry.ts": {
+    "file": "assets/Scss.entry-[hash].js",
+    "name": "Scss.entry",
+    "src": "vendor/praetorius/test-extension/Resources/Private/Scss.entry.ts",
+    "isEntry": true,
+    "css": [
+      "assets/Scss-[hash].css"
+    ]
+  },
   "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts": {
     "file": "assets/Vendor.entry-[hash].js",
     "name": "Vendor.entry",

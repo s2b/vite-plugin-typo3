@@ -23,7 +23,7 @@ test("vite build works for TYPO3 project", async () => {
         (a, b) => (a.fileName < b.fileName ? -1 : 1),
     );
 
-    expect(sortedOutput).toHaveLength(6);
+    expect(sortedOutput).toHaveLength(8);
 
     expect((sortedOutput[0] as OutputAsset).fileName).toBe(
         ".vite/manifest.json",
@@ -51,13 +51,25 @@ test("vite build works for TYPO3 project", async () => {
 
     expect(
         withoutHashes((sortedOutput[4] as OutputAsset).fileName),
-    ).toMatchInlineSnapshot(`"assets/Vendor-[hash].css"`);
+    ).toMatchInlineSnapshot(`"assets/Scss-[hash].css"`);
     expect((sortedOutput[4] as OutputAsset).source).toContain(
-        "body{background:#00f}",
+        ".partial{color:#00f}.scss-main{background:green}",
     );
 
     expect(
         withoutHashes((sortedOutput[5] as OutputChunk).fileName),
+    ).toMatchInlineSnapshot(`"assets/Scss.entry-[hash].js"`);
+    expect((sortedOutput[5] as OutputChunk).code).not.toContain("scss-main");
+
+    expect(
+        withoutHashes((sortedOutput[6] as OutputAsset).fileName),
+    ).toMatchInlineSnapshot(`"assets/Vendor-[hash].css"`);
+    expect((sortedOutput[6] as OutputAsset).source).toContain(
+        "body{background:#00f}",
+    );
+
+    expect(
+        withoutHashes((sortedOutput[7] as OutputChunk).fileName),
     ).toMatchInlineSnapshot(`"assets/Vendor.entry-[hash].js"`);
-    expect((sortedOutput[5] as OutputChunk).code).toContain("Vendor.ts");
+    expect((sortedOutput[7] as OutputChunk).code).toContain("Vendor.ts");
 });
