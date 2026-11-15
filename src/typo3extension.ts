@@ -40,7 +40,7 @@ export default function typo3extension(
                     config.root ?? process.cwd(),
                 );
             } catch (err: any) {
-                logger.error(colors.red(err.mesage), { timestamp: true });
+                logger.error(colors.red(err.message), { timestamp: true });
                 return;
             }
 
