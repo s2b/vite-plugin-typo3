@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { type PluginOption, createLogger } from "vite";
 import colors from "picocolors";
@@ -9,6 +10,7 @@ import type {
 } from "./types.js";
 import {
     addAliases,
+    addFileToWatchIgnoreList,
     addRollupInputs,
     determineAvailableTypo3Extensions,
     findEntrypointsInExtensions,
@@ -17,6 +19,7 @@ import {
     initializePluginConfig,
     outputDebugInformation,
 } from "./utils.js";
+import { trackDevServerStatus } from "./devServerStatus.js";
 
 export default function typo3project(
     userConfig: UserConfig = {},
@@ -44,6 +47,31 @@ export default function typo3project(
             } catch (err: any) {
                 logger.error(colors.red(err.message), { timestamp: true });
                 return;
+            }
+
+            const { devServerStatus } = pluginConfig;
+            if (
+                devServerStatus.enabled &&
+                env.command === "serve" &&
+                !existsSync(devServerStatus.envFile)
+            ) {
+                logger.warn(
+                    colors.yellow(
+                        `Env file ${devServerStatus.envFile} doesn't exist, so the dev server status won't be written to it. Create the file or disable the "devServerStatus" option.`,
+                    ),
+                    { timestamp: true },
+                );
+                devServerStatus.enabled = false;
+            }
+
+            // Vite restarts the dev server whenever an env file changes. Since we
+            // write the server status to an env file ourselves, this would lead
+            // to an endless restart loop, so the file is excluded from watching.
+            if (devServerStatus.enabled) {
+                config.server.watch.ignored = addFileToWatchIgnoreList(
+                    config.server.watch.ignored,
+                    devServerStatus.envFile,
+                );
             }
 
             if (env.command === "serve" && env.mode === "production") {
@@ -149,6 +177,12 @@ export default function typo3project(
                     pluginConfig.aliases,
                 );
             }
+        },
+        configureServer(server) {
+            if (!pluginConfig) {
+                return;
+            }
+            trackDevServerStatus(server, pluginConfig.devServerStatus, logger);
         },
     };
 }

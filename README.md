@@ -80,6 +80,13 @@ You can provide additional configuration to the plugin, for example:
     and `@` are created for all available extension folders. If set to `@`, only `@` aliases
     are created, if set to `EXT`, only `EXT:` aliases are created. If set to `false`, alias
     creation is skipped altogether.
+-   `devServerStatus` (boolean or object, default `false`): If enabled, the status of the dev server
+    is written to an env file in the composer project: `VITE_SERVER_RUNNING=1` while the server
+    is running, `VITE_SERVER_RUNNING=0` after it has stopped. Use
+    `{ envFile: ".env.local", variableName: "MY_VARIABLE" }` to adjust the file (relative to the
+    composer root, default `.env`) or the variable name. The file needs to exist already (otherwise
+    the option is disabled with a warning) and is no longer watched by vite, so manual changes to it require a restart of the dev server.
+    This option has no effect if `target` is set to `extension`.
 
 ### Fixing CORS issues
 

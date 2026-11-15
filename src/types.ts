@@ -4,6 +4,7 @@ export interface UserConfig {
     entrypointIgnorePatterns?: string[];
     debug?: boolean;
     aliases?: AliasConfig;
+    devServerStatus?: DevServerStatusUserConfig | boolean;
 }
 
 export interface PluginConfig<T extends ComposerContext> extends UserConfig {
@@ -13,6 +14,7 @@ export interface PluginConfig<T extends ComposerContext> extends UserConfig {
     entrypointIgnorePatterns: string[];
     debug: boolean;
     aliases: AliasConfig;
+    devServerStatus: DevServerStatusConfig;
 }
 
 export interface ComposerContext {
@@ -32,6 +34,15 @@ export interface Typo3ProjectContext extends ComposerContext {
     type: "project";
     vendorDir: string;
     webDir: string;
+}
+
+export interface DevServerStatusUserConfig {
+    variableName?: string;
+    envFile?: string;
+}
+
+export interface DevServerStatusConfig extends Required<DevServerStatusUserConfig> {
+    enabled: boolean;
 }
 
 export type PluginTarget = "project" | "extension";
