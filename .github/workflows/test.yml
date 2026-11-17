@@ -7,7 +7,12 @@ on:
 
 jobs:
   test:
+    name: test (vite ${{ matrix.vite }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        vite: [7, 8]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # 6.3.0
@@ -15,7 +20,9 @@ jobs:
           node-version: 24
           cache: "npm"
       - run: npm ci
+      - run: npm install --no-save vite@${{ matrix.vite }}
       - run: npm run lint
+      - run: npm run build
       - run: npm test
 
   test-distribution:
