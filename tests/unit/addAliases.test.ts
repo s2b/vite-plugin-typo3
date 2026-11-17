@@ -21,6 +21,10 @@ describe("addAliases", () => {
                 find: "EXT:test_extension",
                 replacement: "/path/to/dummy/extension1",
             },
+            {
+                find: "ext:test_extension",
+                replacement: "/path/to/dummy/extension1",
+            },
         ]);
     });
     test("existing aliases as object", () => {
@@ -45,6 +49,10 @@ describe("addAliases", () => {
             },
             {
                 find: "EXT:test_extension",
+                replacement: "/path/to/dummy/extension1",
+            },
+            {
+                find: "ext:test_extension",
                 replacement: "/path/to/dummy/extension1",
             },
         ]);
@@ -92,6 +100,10 @@ describe("addAliases", () => {
                 find: "EXT:test_extension",
                 replacement: "/path/to/dummy/extension1",
             },
+            {
+                find: "ext:test_extension",
+                replacement: "/path/to/dummy/extension1",
+            },
         ]);
     });
     test("no double slashes in added alias paths", () => {
@@ -110,6 +122,10 @@ describe("addAliases", () => {
             },
             {
                 find: "EXT:test_extension",
+                replacement: "/path/to/dummy/extension1",
+            },
+            {
+                find: "ext:test_extension",
                 replacement: "/path/to/dummy/extension1",
             },
         ]);
@@ -165,6 +181,10 @@ describe("addAliases", () => {
         ).toEqual([
             {
                 find: "EXT:test_extension",
+                replacement: "/path/to/dummy/extension1",
+            },
+            {
+                find: "ext:test_extension",
                 replacement: "/path/to/dummy/extension1",
             },
         ]);
