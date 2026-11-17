@@ -1,6 +1,8 @@
-import { test, expect } from "vitest";
-import { build } from "vite";
+import { test, expect, vi } from "vitest";
+import { build, createServer } from "vite";
 import typo3 from "../../src";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { RolldownOutput, OutputChunk, OutputAsset } from "rolldown";
@@ -73,4 +75,45 @@ test("vite build works for TYPO3 project", async () => {
         withoutHashes((sortedOutput[7] as OutputChunk).fileName),
     ).toMatchInlineSnapshot(`"assets/Vendor.entry-[hash].js"`);
     expect((sortedOutput[7] as OutputChunk).code).toContain("Vendor.ts");
+});
+
+async function createDevServer(envFile: string) {
+    const server = await createServer({
+        root: join(__dirname, "project"),
+        plugins: [typo3({ devServerStatus: { envFile } })],
+        logLevel: "silent",
+    });
+    await server.close();
+    return server;
+}
+
+function hasIgnoreFunction(server: Awaited<ReturnType<typeof createServer>>) {
+    return [server.config.server.watch?.ignored]
+        .flat()
+        .some((pattern) => typeof pattern === "function");
+}
+
+test("devServerStatus is disabled with a warning if env file is missing", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const server = await createDevServer("does-not-exist.env");
+    expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining("does-not-exist.env"),
+    );
+    expect(hasIgnoreFunction(server)).toBe(false);
+    warn.mockRestore();
+});
+
+test("devServerStatus excludes existing env file from watching", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "vite-plugin-typo3-"));
+    const envFile = join(dir, ".env");
+    writeFileSync(envFile, "");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+        const server = await createDevServer(envFile);
+        expect(warn).not.toHaveBeenCalled();
+        expect(hasIgnoreFunction(server)).toBe(true);
+    } finally {
+        warn.mockRestore();
+        rmSync(dir, { recursive: true });
+    }
 });

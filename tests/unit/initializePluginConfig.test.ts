@@ -24,6 +24,11 @@ describe("initializePluginConfig", () => {
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: false,
             aliases: true,
+            devServerStatus: {
+                enabled: false,
+                envFile: "/path/to/fixtures/composerProject/.env",
+                variableName: "VITE_SERVER_RUNNING",
+            },
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
@@ -44,6 +49,11 @@ describe("initializePluginConfig", () => {
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: true,
             aliases: true,
+            devServerStatus: {
+                enabled: false,
+                envFile: "/path/to/fixtures/composerProject/.env",
+                variableName: "VITE_SERVER_RUNNING",
+            },
             composerContext: {
                 type: "project",
                 path: "/path/to/fixtures/composerProject",
@@ -64,11 +74,71 @@ describe("initializePluginConfig", () => {
             entrypointIgnorePatterns: ["**/node_modules/**", "**/.git/**"],
             debug: false,
             aliases: true,
+            devServerStatus: {
+                enabled: false,
+                envFile:
+                    "/path/to/fixtures/composerProject/packages/composerExtension/.env",
+                variableName: "VITE_SERVER_RUNNING",
+            },
             composerContext: {
                 type: "typo3-cms-extension",
                 path: "/path/to/fixtures/composerProject/packages/composerExtension/",
                 extensionKey: "composer_extension",
             },
+        });
+    });
+    test("devServerStatus enabled with defaults", () => {
+        expect(
+            initializePluginConfig<Typo3ProjectContext>(
+                { devServerStatus: true },
+                "/path/to/fixtures/composerProject",
+            ).devServerStatus,
+        ).toEqual({
+            enabled: true,
+            envFile: "/path/to/fixtures/composerProject/.env",
+            variableName: "VITE_SERVER_RUNNING",
+        });
+    });
+    test("devServerStatus with custom settings", () => {
+        expect(
+            initializePluginConfig<Typo3ProjectContext>(
+                {
+                    devServerStatus: {
+                        envFile: "config/.env.local",
+                        variableName: "VITE_DEV",
+                    },
+                },
+                "/path/to/fixtures/composerProject",
+            ).devServerStatus,
+        ).toEqual({
+            enabled: true,
+            envFile: "/path/to/fixtures/composerProject/config/.env.local",
+            variableName: "VITE_DEV",
+        });
+    });
+    test("devServerStatus with absolute env file", () => {
+        expect(
+            initializePluginConfig<Typo3ProjectContext>(
+                { devServerStatus: { envFile: "/somewhere/else/.env" } },
+                "/path/to/fixtures/composerProject",
+            ).devServerStatus.envFile,
+        ).toBe("/somewhere/else/.env");
+    });
+    test("devServerStatus falls back to defaults for undefined options", () => {
+        expect(
+            initializePluginConfig<Typo3ProjectContext>(
+                {
+                    devServerStatus: {
+                        envFile: undefined,
+                        variableName: undefined,
+                    },
+                },
+                "/path/to/fixtures/composerProject",
+            ).devServerStatus,
+        ).toEqual({
+            enabled: true,
+            envFile: "/path/to/fixtures/composerProject/.env",
+            variableName: "VITE_SERVER_RUNNING",
         });
     });
     test("error if no composer project", () => {

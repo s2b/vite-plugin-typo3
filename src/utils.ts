@@ -16,6 +16,7 @@ import type {
     Typo3ProjectContext,
     Typo3ExtensionContext,
     AliasConfig,
+    DevServerStatusConfig,
 } from "./types.js";
 
 // Copied from rollup/rolldown to stay compatible with both
@@ -47,7 +48,36 @@ export function initializePluginConfig<T extends ComposerContext>(
         composerContext,
         aliases: true,
         ...userConfig,
+        devServerStatus: initializeDevServerStatusConfig(
+            userConfig.devServerStatus,
+            composerContext.path,
+        ),
     };
+}
+
+function initializeDevServerStatusConfig(
+    userConfig: UserConfig["devServerStatus"],
+    basePath: string,
+): DevServerStatusConfig {
+    const options = typeof userConfig === "object" ? userConfig : {};
+    return {
+        enabled: !!userConfig,
+        envFile: resolve(basePath, options.envFile ?? ".env"),
+        variableName: options.variableName ?? "VITE_SERVER_RUNNING",
+    };
+}
+
+/**
+ * Adds a single file to vite's watch ignore list while preserving
+ * the existing (user-defined or default) ignore patterns
+ */
+export function addFileToWatchIgnoreList<T>(
+    ignored: T | T[] | undefined,
+    file: string,
+): (T | ((path: string) => boolean))[] {
+    const existing = ignored === undefined ? [] : ([] as T[]).concat(ignored);
+    // Use a matcher function to avoid glob interpretation of special characters in the path
+    return [...existing, (path: string) => resolve(path) === file];
 }
 
 export function collectComposerChain(path: string): ComposerContext[] {
@@ -296,4 +326,40 @@ export function getDefaultIgnoreList(): string[] {
 
 export function getDefaultAllowedOrigins(): RegExp[] {
     return [defaultAllowedOrigins, /^https?:\/\/.*\.ddev\.site(:\d+)?$/];
+}
+
+/**
+ * @returns whether the file needed to be changed
+ */
+export function updateEnvFile(
+    devServerStatusConfig: DevServerStatusConfig,
+    status: boolean,
+): boolean {
+    const prefix = `${devServerStatusConfig.variableName}=`;
+    const assignment = `${prefix}${Number(status)}`;
+    const contents = fs.readFileSync(devServerStatusConfig.envFile, "utf-8");
+    const lines = contents.split("\n");
+    const lineEnding = contents.includes("\r\n") ? "\r\n" : "\n";
+    let updatedContents: string;
+    if (lines.some((line) => line.startsWith(prefix))) {
+        // Replace the whole line regardless of its current value, but keep the
+        // "\r" of CRLF line endings. All occurrences are updated, since
+        // duplicate definitions would otherwise override our value.
+        updatedContents = lines
+            .map((line) =>
+                line.startsWith(prefix)
+                    ? assignment + (line.endsWith("\r") ? "\r" : "")
+                    : line,
+            )
+            .join("\n");
+    } else if (contents === "" || contents.endsWith("\n")) {
+        updatedContents = contents + assignment + lineEnding;
+    } else {
+        updatedContents = contents + lineEnding + assignment;
+    }
+    if (updatedContents === contents) {
+        return false;
+    }
+    fs.writeFileSync(devServerStatusConfig.envFile, updatedContents);
+    return true;
 }
