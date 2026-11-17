@@ -1,26 +1,26 @@
 {
   "vendor/praetorius/test-extension/Resources/Private/Alt.entry.ts": {
-    "file": "assets/Alt.entry-BoPKGVcr.js",
+    "file": "assets/Alt.entry-[hash].js",
     "name": "Alt.entry",
     "src": "vendor/praetorius/test-extension/Resources/Private/Alt.entry.ts",
     "isEntry": true
   },
   "vendor/praetorius/test-extension/Resources/Private/Main.entry.ts": {
-    "file": "assets/Main.entry-49EpidS1.js",
+    "file": "assets/Main.entry-[hash].js",
     "name": "Main.entry",
     "src": "vendor/praetorius/test-extension/Resources/Private/Main.entry.ts",
     "isEntry": true,
     "css": [
-      "assets/Main-VWk4xp3e.css"
+      "assets/Main-[hash].css"
     ]
   },
   "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts": {
-    "file": "assets/Vendor.entry-Bk2RJPqq.js",
+    "file": "assets/Vendor.entry-[hash].js",
     "name": "Vendor.entry",
     "src": "vendor/test-vendor/vendor-extension/Resources/Private/Vendor.entry.ts",
     "isEntry": true,
     "css": [
-      "assets/Vendor-DE25tVp9.css"
+      "assets/Vendor-[hash].css"
     ]
   }
 }

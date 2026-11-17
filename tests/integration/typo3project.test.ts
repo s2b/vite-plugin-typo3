@@ -7,6 +7,11 @@ import { RolldownOutput, OutputChunk, OutputAsset } from "rolldown";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
+// Content hashes differ between Rollup (Vite 7) and Rolldown (Vite 8)
+function withoutHashes(value: string): string {
+    return value.replace(/-[\w-]{8}\.(js|css)\b/g, "-[hash].$1");
+}
+
 test("vite build works for TYPO3 project", async () => {
     const root = join(__dirname, "project");
     const output = (await build({
@@ -23,44 +28,36 @@ test("vite build works for TYPO3 project", async () => {
     expect((sortedOutput[0] as OutputAsset).fileName).toBe(
         ".vite/manifest.json",
     );
-    await expect((sortedOutput[0] as OutputAsset).source).toMatchFileSnapshot(
-        "manifest-expected.json",
+    await expect(
+        withoutHashes((sortedOutput[0] as OutputAsset).source as string),
+    ).toMatchFileSnapshot("manifest-expected.json");
+
+    expect(
+        withoutHashes((sortedOutput[1] as OutputChunk).fileName),
+    ).toMatchInlineSnapshot(`"assets/Alt.entry-[hash].js"`);
+    expect((sortedOutput[1] as OutputChunk).code).toContain("Alt.entry.ts");
+
+    expect(
+        withoutHashes((sortedOutput[2] as OutputAsset).fileName),
+    ).toMatchInlineSnapshot(`"assets/Main-[hash].css"`);
+    expect((sortedOutput[2] as OutputAsset).source).toContain(
+        "body{background:red}",
     );
 
-    expect((sortedOutput[1] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Alt.entry-BoPKGVcr.js"`,
-    );
-    expect((sortedOutput[1] as OutputChunk).code).toMatchInlineSnapshot(
-        `"console.log(\`Alt.entry.ts\`);"`,
+    expect(
+        withoutHashes((sortedOutput[3] as OutputChunk).fileName),
+    ).toMatchInlineSnapshot(`"assets/Main.entry-[hash].js"`);
+    expect((sortedOutput[3] as OutputChunk).code).toContain("Main.ts");
+
+    expect(
+        withoutHashes((sortedOutput[4] as OutputAsset).fileName),
+    ).toMatchInlineSnapshot(`"assets/Vendor-[hash].css"`);
+    expect((sortedOutput[4] as OutputAsset).source).toContain(
+        "body{background:#00f}",
     );
 
-    expect((sortedOutput[2] as OutputAsset).fileName).toMatchInlineSnapshot(
-        `"assets/Main-VWk4xp3e.css"`,
-    );
-    expect((sortedOutput[2] as OutputAsset).source).toMatchInlineSnapshot(`
-      "body{background:red}
-      "
-    `);
-
-    expect((sortedOutput[3] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Main.entry-49EpidS1.js"`,
-    );
-    expect((sortedOutput[3] as OutputChunk).code).toMatchInlineSnapshot(
-        `"console.log(\`Main.ts\`);"`,
-    );
-
-    expect((sortedOutput[4] as OutputAsset).fileName).toMatchInlineSnapshot(
-        `"assets/Vendor-DE25tVp9.css"`,
-    );
-    expect((sortedOutput[4] as OutputAsset).source).toMatchInlineSnapshot(`
-      "body{background:#00f}
-      "
-    `);
-
-    expect((sortedOutput[5] as OutputChunk).fileName).toMatchInlineSnapshot(
-        `"assets/Vendor.entry-Bk2RJPqq.js"`,
-    );
-    expect((sortedOutput[5] as OutputChunk).code).toMatchInlineSnapshot(
-        `"console.log(\`Vendor.ts\`);"`,
-    );
+    expect(
+        withoutHashes((sortedOutput[5] as OutputChunk).fileName),
+    ).toMatchInlineSnapshot(`"assets/Vendor.entry-[hash].js"`);
+    expect((sortedOutput[5] as OutputChunk).code).toContain("Vendor.ts");
 });
