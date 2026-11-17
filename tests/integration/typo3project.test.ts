@@ -52,9 +52,10 @@ test("vite build works for TYPO3 project", async () => {
     expect(
         withoutHashes((sortedOutput[4] as OutputAsset).fileName),
     ).toMatchInlineSnapshot(`"assets/Scss-[hash].css"`);
-    expect((sortedOutput[4] as OutputAsset).source).toContain(
-        ".partial{color:#00f}.scss-main{background:green}",
-    );
+    const scssSource = (sortedOutput[4] as OutputAsset).source;
+    expect(scssSource).toContain(".scss-main{background:green}");
+    expect(scssSource).toContain(".module{color:orange}"); // @use
+    expect(scssSource).toContain(".partial{color:#00f}"); // @import
 
     expect(
         withoutHashes((sortedOutput[5] as OutputChunk).fileName),

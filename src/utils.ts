@@ -263,6 +263,7 @@ export function createAliases(
                 find: "EXT:" + extension.extensionKey,
                 replacement,
             });
+            // Sass treats "EXT:" as a URL scheme and normalizes it to lowercase
             aliases.push({
                 find: "ext:" + extension.extensionKey,
                 replacement,
